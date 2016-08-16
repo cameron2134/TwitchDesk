@@ -20,6 +20,7 @@ public class Livestream implements Runnable {
     private GUI gui;
     private String url;
     
+    
     public Livestream(GUI gui, String[] streamCmd) {
         
         this.streamCmd = streamCmd;
@@ -67,17 +68,22 @@ public class Livestream implements Runnable {
     }
     
     
-    public boolean isActive() {
-        return process.isAlive();
-    }
+    
     
     
     public void endStream() {
         IO.log("[Info] Stream has ended.");
         process.destroy();
-        gui.getPlayer().getMediaPlayer().stop();
+        gui.stopVideo();
         
     }
+    
+    
+    public boolean isActive() {
+        return process.isAlive();
+    }
+    
+    
 
     @Override
     public void run() {

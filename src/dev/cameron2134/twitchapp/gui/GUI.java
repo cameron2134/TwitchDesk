@@ -11,33 +11,22 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
-import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 
 public class GUI extends javax.swing.JFrame {
 
     private TwitchApp app;
-    private LivestreamerSetup liveSetup;
-    private Livestream stream;
-    
-    private EmbeddedMediaPlayerComponent mediaPlayerComponent;
-    
     private String url;
 
+    
+    
     public GUI() {
         
         feel();
@@ -45,36 +34,14 @@ public class GUI extends javax.swing.JFrame {
         
         applyCSS();
         app = new TwitchApp(this);
-        
-        NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "res/data/vlc");
 
-        
-        mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
         videoPanel.setLayout(new BorderLayout());
         videoPanel.setPreferredSize(new Dimension(695, 4));
-        videoPanel.add(mediaPlayerComponent, BorderLayout.CENTER);
-        //mediaPlayerComponent.setCursorEnabled(false);
-        mediaPlayerComponent.getMediaPlayer().setEnableKeyInputHandling(false);
-        mediaPlayerComponent.getMediaPlayer().setEnableMouseInputHandling(false);
-        mediaPlayerComponent.getVideoSurface().addMouseListener(new MouseAdapter() {
+        videoPanel.add(app.getVideoPlayer(), BorderLayout.CENTER);
         
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                
-                if (mediaPlayerComponent.getMediaPlayer().isPlaying())
-                    mediaPlayerComponent.getMediaPlayer().pause();
-                else
-                    mediaPlayerComponent.getMediaPlayer().play();
-                
-            }
-            
-        });
-        
-        
-        liveSetup = new LivestreamerSetup();
-        liveSetup.findInstallation();
-        this.stream = new Livestream(this, liveSetup.createCmd());
-        new Thread(this.stream).start();
+
+        //this.stream = new Livestream(this, liveSetup.createCmd());
+        //new Thread(this.stream).start();
         
         //displayVideo();
     }
@@ -135,7 +102,7 @@ public class GUI extends javax.swing.JFrame {
                 if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     
                     System.out.println(e.getURL());
-                    loadStream(e.getURL().toString());
+                    app.initStream(e.getURL().toString());
                 }
                 
             }
@@ -145,14 +112,9 @@ public class GUI extends javax.swing.JFrame {
         
     }
     
-    private void loadStream(String url) {
-        if (stream.isActive())
-            stream.endStream();
-        
-        liveSetup.setStreamURL(url);
-        stream = new Livestream(this, liveSetup.createCmd());
-        new Thread(stream).start();
-    }
+
+    
+    
     
     public void updateFeatGames() {
         
@@ -192,14 +154,15 @@ public class GUI extends javax.swing.JFrame {
         
         
         // Remember to destroy the process before closing the app!!!
-        mediaPlayerComponent.getMediaPlayer().playMedia(url);
+        app.getVideoPlayer().getMediaPlayer().playMedia(url);
         
     }
     
     
-    public EmbeddedMediaPlayerComponent getPlayer() {
-        return this.mediaPlayerComponent;
+    public void stopVideo() {
+        app.getVideoPlayer().getMediaPlayer().stop();
     }
+    
     
     
    // <editor-fold defaultstate="collapsed" desc=" Look and Feel ">   
@@ -238,7 +201,7 @@ public class GUI extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("twitch app");
+        setTitle("TwitchDesk");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 

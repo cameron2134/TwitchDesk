@@ -3,20 +3,18 @@ package dev.cameron2134.twitchapp;
 
 import com.mb3364.twitch.api.Twitch;
 import com.mb3364.twitch.api.auth.Scopes;
-import com.mb3364.twitch.api.handlers.ChannelFollowsResponseHandler;
-import com.mb3364.twitch.api.handlers.ChannelSubscriptionsResponseHandler;
-import com.mb3364.twitch.api.handlers.StreamResponseHandler;
 import com.mb3364.twitch.api.handlers.StreamsResponseHandler;
 import com.mb3364.twitch.api.handlers.TokenResponseHandler;
 import com.mb3364.twitch.api.handlers.UserFollowsResponseHandler;
-import com.mb3364.twitch.api.models.ChannelFollow;
-import com.mb3364.twitch.api.models.ChannelSubscription;
 import com.mb3364.twitch.api.models.Stream;
 import com.mb3364.twitch.api.models.Token;
 import com.mb3364.twitch.api.models.UserFollow;
-import com.mb3364.twitch.api.resources.StreamsResource;
+import com.sun.jna.NativeLibrary;
 import dev.cameron2134.twitchapp.gui.GUI;
+import dev.cameron2134.twitchapp.livestreamer.Livestream;
+import dev.cameron2134.twitchapp.livestreamer.LivestreamerSetup;
 import dev.cameron2134.twitchapp.utils.IO;
+import dev.cameron2134.twitchapp.video.VideoPlayer;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +22,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 
 public class TwitchApp {
@@ -44,6 +42,9 @@ public class TwitchApp {
     private boolean requiresUpdates, dataReady;
     
     private GUI gui;
+    private LivestreamerSetup liveSetup;
+    private Livestream stream;
+    private VideoPlayer player;
     
     
     
@@ -55,14 +56,23 @@ public class TwitchApp {
         if (!new File("res/data").exists())
             new File("res/data").mkdir();
         
+        NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "res/data/vlc");
+        
         this.twitch = new Twitch();
         this.updater = new AutoUpdater(this, gui);
+        this.liveSetup = new LivestreamerSetup();
+        this.player = new VideoPlayer();
         
         this.username = "N/A";
         this.gui = gui;
         this.requiresUpdates = dataReady = false;
         
+        
+        this.liveSetup.findInstallation();
         authenticateUser();
+        
+        
+        
         
         new Thread(this.updater).start();
 
@@ -230,6 +240,20 @@ public class TwitchApp {
     
     
     
+    public void initStream(String url) {
+        
+        if (this.stream != null && stream.isActive())
+            this.stream.endStream();
+        
+        this.liveSetup.setStreamURL(url);
+        this.stream = new Livestream(this.gui, this.liveSetup.createCmd());
+        new Thread(this.stream).start();
+        
+    }
+    
+    
+    
+    
     
     // Automatically update any data that may have changed, e.g. live follows
     public void refresh() {
@@ -248,6 +272,13 @@ public class TwitchApp {
     
     public boolean isDataReady() {
         return dataReady;
+    }
+    
+    
+    
+    
+    public EmbeddedMediaPlayerComponent getVideoPlayer() {
+        return this.player.getVideoPlayer();
     }
     
     // Return list of users follows who are currently streaming
