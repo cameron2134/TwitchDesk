@@ -7,10 +7,20 @@ import com.sun.jna.NativeLibrary;
 import dev.cameron2134.twitchapp.TwitchApp;
 import dev.cameron2134.twitchapp.livestreamer.Livestream;
 import dev.cameron2134.twitchapp.livestreamer.LivestreamerSetup;
+import dev.cameron2134.twitchapp.utils.IO;
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -31,12 +41,13 @@ public class GUI extends javax.swing.JFrame {
         
         feel();
         initComponents();
+        setUpTray();
         
         applyCSS();
         app = new TwitchApp(this);
 
         videoPanel.setLayout(new BorderLayout());
-        videoPanel.setPreferredSize(new Dimension(695, 4));
+        videoPanel.setPreferredSize(new Dimension(785, 4));
         videoPanel.add(app.getVideoPlayer(), BorderLayout.CENTER);
         
 
@@ -63,7 +74,7 @@ public class GUI extends javax.swing.JFrame {
         List<Stream> liveFollowList = app.getLiveFollowList();
         List<UserFollow> followList = app.getFollowList();
 
-        System.out.println(liveFollowList.get(0).hashCode());
+        
         // Show live follows
         if (!liveFollowList.isEmpty()) {
             for (int i = 0; i < liveFollowList.size(); i++) {
@@ -165,6 +176,84 @@ public class GUI extends javax.swing.JFrame {
     
     
     
+    
+    
+    
+    
+    /**
+     * Adds window listeners to minimize the application into the system tray on minimize. Clicking
+     * on the icon in the tray opens it up again.
+     */
+    private void setUpTray() {
+        Image img = Toolkit.getDefaultToolkit().getImage("res/img/twitch.png");
+        
+        //Check the SystemTray is supported
+        if (!SystemTray.isSupported()) {
+            IO.log("[Error] SystemTray is not supported!");
+            System.err.println("SystemTray is not supported");
+            return;
+        }
+        
+        PopupMenu popup = new PopupMenu();
+        TrayIcon trayIcon = new TrayIcon(img, "TwitchDesk", popup);
+        trayIcon.setImageAutoSize(true);
+        
+        SystemTray tray = SystemTray.getSystemTray();
+       
+
+        MenuItem aboutItem = new MenuItem("Show");
+        popup.add(aboutItem);
+       
+
+        
+        
+        
+        
+        // When the application is minimized, hide it in the tray.
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowIconified(WindowEvent e) {
+                
+                //Hides it from screen
+                GUI.this.setState(GUI.ICONIFIED);
+                //Hides it from taskbar and screen
+                GUI.this.setVisible(false);
+                
+                try {
+                    tray.add(trayIcon);
+                } 
+                
+                catch (AWTException ex) {
+                    IO.log("[Error] TrayIcon could not be added.");
+                    System.err.println("TrayIcon could not be added.");
+                }
+                
+            }
+        
+        });
+        
+        
+        // Restore the frame from system tray
+        trayIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                
+                GUI.this.setVisible(true);
+                GUI.this.setState (GUI.this.NORMAL);
+                
+                
+                tray.remove(trayIcon);
+
+            }
+        });
+        
+        
+    }
+    
+    
+    
+    
+    
    // <editor-fold defaultstate="collapsed" desc=" Look and Feel ">   
     private void feel() {
 
@@ -197,8 +286,6 @@ public class GUI extends javax.swing.JFrame {
         streamerPane = new javax.swing.JEditorPane();
         videoPanel = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TwitchDesk");
@@ -223,7 +310,7 @@ public class GUI extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 506, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -233,18 +320,12 @@ public class GUI extends javax.swing.JFrame {
         videoPanel.setLayout(videoPanelLayout);
         videoPanelLayout.setHorizontalGroup(
             videoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 691, Short.MAX_VALUE)
+            .addGap(0, 781, Short.MAX_VALUE)
         );
         videoPanelLayout.setVerticalGroup(
             videoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
-
-        jMenu1.setText("Options");
-        jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Help");
-        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -254,8 +335,8 @@ public class GUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(videoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(videoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -263,9 +344,9 @@ public class GUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(videoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(videoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -276,8 +357,6 @@ public class GUI extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

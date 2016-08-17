@@ -8,13 +8,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class IO {
@@ -217,22 +213,7 @@ public class IO {
     }
     
     
-    
-    
-    
-    
-    public static String numToGB(long num) {
-        return String.valueOf(num / 1024 / 1024 / 1024);
-    }
-    
-    public static String numToMB(long num) {
-        return String.valueOf(num / 1024 / 1024);
-    }
-    
-    
-    public static int parseInt(String value) {
-        return Integer.parseInt(value);
-    }
+
     
     
 }
