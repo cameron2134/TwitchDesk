@@ -40,6 +40,7 @@ public class AutoUpdater implements Runnable {
                 } 
                 
                 catch (InterruptedException ex) {
+                    IO.log("[Error] " + ex.toString());
                     System.err.println(ex.toString());
                 }
             }
@@ -54,6 +55,7 @@ public class AutoUpdater implements Runnable {
             } 
             
             catch (InterruptedException ex) {
+                IO.log("[Error] " + ex.toString());
                 System.err.println(ex.toString());
             }
         }

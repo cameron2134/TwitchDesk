@@ -32,7 +32,9 @@ public class Livestream implements Runnable {
     
     
     public void startStream() {
-
+        
+        IO.log("[Info] Stream has started.");
+        
         ProcessBuilder builder;
         
         
@@ -50,7 +52,7 @@ public class Livestream implements Runnable {
                 if (output.contains("127.0.0.1")) {
                     String[] h = output.split(" ");
                     url = h[2];
-                    gui.displayVideo(url);
+                    gui.setURL(url);
                     
                 }
                 
@@ -59,11 +61,8 @@ public class Livestream implements Runnable {
         } 
         
         catch (IOException ex) {
+            IO.log("[Error] " + ex.toString());
             System.err.println(ex.toString());
-        }
-        
-        catch (NullPointerException ex) {
-            System.err.println(ex);
         }
         
     }
@@ -73,6 +72,7 @@ public class Livestream implements Runnable {
     
     
     public void endStream() {
+        IO.log("[Info] Stream has ended.");
         process.destroy();
         gui.stopVideo();
         
