@@ -38,7 +38,6 @@ public class IO {
         } 
         
         catch (IOException ex) {
-            log("[Error] " + ex.toString());
             System.out.println(ex.toString());
             
         } 
@@ -48,7 +47,6 @@ public class IO {
                 writer.close();
             }
             catch (Exception ex) {
-                log("[Error] " + ex.toString());
                 System.out.println(ex.toString());
             }
         }
@@ -56,40 +54,7 @@ public class IO {
     }
     
     
-    
-    public static void log(String text) {
-        java.util.Date date= new java.util.Date();
-        System.out.println();
-        BufferedWriter writer = null;
-        
-        // Appends each new option to the options config file
-        
-        
-        try {
-            // The boolean value tells the filewriter to append to the text file rather than overwrite
-            writer = new BufferedWriter(new FileWriter(log, true));
 
-            writer.write("[" + new Timestamp(date.getTime()) + "] " + text);
-            writer.newLine();
-        } 
-        
-        catch (IOException ex) {
-            log("[Error] " + ex.toString());
-            System.out.println(ex.toString());
-        } 
-        
-        finally {
-            try {
-                writer.close();
-            }
-            catch (Exception ex) {
-                log("[Error] " + ex.toString());
-                System.out.println(ex.toString());
-            }
-        }
-             
-        
-    }
     
     
     
@@ -108,12 +73,10 @@ public class IO {
         } 
         
         catch (FileNotFoundException ex) {
-            log("[Error] " + ex.toString());
             System.out.println(ex.toString());
         } 
         
         catch (IOException ex) {
-            log("[Error] " + ex.toString());
             System.out.println(ex.toString());
         } 
         
@@ -123,7 +86,6 @@ public class IO {
             } 
             
             catch (IOException ex) {
-                log("[Error] " + ex.toString());
                 System.out.println(ex.toString());
             }
         }
@@ -148,7 +110,6 @@ public class IO {
         }
         
         catch(IOException ex) {
-            log("[Error] " + ex.toString());
             System.out.println(ex.toString());
         }
         
@@ -158,7 +119,6 @@ public class IO {
                 reader.close();
             }
             catch (Exception ex) {
-                log("[Error] " + ex.toString());
                 System.out.println(ex.toString());
             }
         }
@@ -193,7 +153,6 @@ public class IO {
         }
         
         catch(IOException ex) {
-            log("[Error] " + ex.toString());
             System.out.println(ex.toString());
         }
         
@@ -203,7 +162,6 @@ public class IO {
                 reader.close();
             }
             catch (Exception ex) {
-                log("[Error] " + ex.toString());
                 System.out.println(ex.toString());
             }
         }

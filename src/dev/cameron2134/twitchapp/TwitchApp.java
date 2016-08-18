@@ -22,13 +22,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 
 public class TwitchApp {
 
-    private final File settings = new File("res/data/settings.cfg");
     private final File tokenFile = new File("res/data/token.cfg");
     
     private List<UserFollow> usersFollowing = new ArrayList<>();
@@ -61,14 +59,12 @@ public class TwitchApp {
         this.twitch = new Twitch();
         this.updater = new AutoUpdater(this, gui);
         this.liveSetup = new LivestreamerSetup();
-        this.player = new VideoPlayer();
+        this.player = new VideoPlayer(gui);
         
         this.username = "N/A";
         this.gui = gui;
         this.requiresUpdates = dataReady = false;
-        
-        
-        this.liveSetup.findInstallation();
+
         authenticateUser();
         
         
@@ -88,7 +84,6 @@ public class TwitchApp {
         // User has not authenticated/ran the application yet
         if (!tokenFile.exists()|| IO.isEmpty(tokenFile)) {
 
-            /* Specify your registered callback URI */
             URI callbackUri = null;
             
             try {
@@ -96,11 +91,9 @@ public class TwitchApp {
             } 
             
             catch (URISyntaxException ex) {
-                IO.log("[Error] " + ex.toString());
                 System.err.println(ex.toString());
             }
 
-            /* Get the authentication URL. Note: you will set the required scopes needed here. */
             String auth = twitch.auth().getAuthenticationUrl(twitch.getClientId(), callbackUri, Scopes.USER_READ, Scopes.CHANNEL_READ, Scopes.CHANNEL_STREAM);
             URI authURL = null;
             
@@ -109,36 +102,29 @@ public class TwitchApp {
             } 
             
             catch (URISyntaxException ex) {
-                IO.log("[Error] " + ex.toString());
                 System.err.println(ex.toString());
             }
             
             try {
-                /* Send the user to the webpage somehow so that they can authorize your application */
                 Desktop.getDesktop().browse(authURL);
             } 
             
             catch (IOException ex) {
-                IO.log("[Error] " + ex.toString());
                 System.err.println(ex.toString());
             }
 
 
-            /* Waits for the user to authorize or deny your application. Note: this function will block until a response is received! */
+            // Waits for authorization, hangs here until pass/fail
             boolean authSuccess = twitch.auth().awaitAccessToken();
 
-            /* Check if authentication was successful */
+
             if (authSuccess) {
-              /* The access token is automatically set in the Twitch object and will be sent with all further API requests! */
               String accessToken = twitch.auth().getAccessToken();
               IO.write(tokenFile, accessToken);
 
             } 
 
             else {
-              /* Authentication failed, most likely because the user denied the authorization request */
-                IO.log("[Error] " + twitch.auth().getAuthenticationError().toString());
-                
                 System.err.println(twitch.auth().getAuthenticationError());
             }
             
@@ -148,7 +134,6 @@ public class TwitchApp {
         // Obtain authentication data from file
         else {
             twitch.auth().setAccessToken(IO.read(tokenFile));
-            IO.log("[Info] Authentication token loaded...");
             System.out.println("Authentication token loaded...");
         }
         
@@ -167,7 +152,7 @@ public class TwitchApp {
             @Override
             public void onSuccess(Token token) {
                 username = token.getUserName();
-                IO.log("[Info] Username retrieved...");
+                
                 System.out.println("Username retrieved...");
                 
                 // The full list of people the user follows
@@ -176,7 +161,6 @@ public class TwitchApp {
                     @Override
                     public void onSuccess(int i, List<UserFollow> list) {
                         usersFollowing = list;
-                        IO.log("[Info] Follower list received...");
                         System.out.println("Follower list retrieved...");
                         
                         // Doesnt need username, automatically detects who's online from who you follow
@@ -185,14 +169,12 @@ public class TwitchApp {
                             @Override
                             public void onSuccess(int i, List<Stream> list) {
                                 usersLive = list;
-                                IO.log("[Info] Live followers retrieved...");
                                 System.out.println("Live followers retrieved...");
                                 dataReady = true;
                             }
 
                             @Override
                             public void onFailure(int i, String string, String string1) {
-                                IO.log("[Error] " + string);
                                 System.err.println(string);
                             }
 
@@ -205,7 +187,6 @@ public class TwitchApp {
 
                     @Override
                     public void onFailure(int i, String string, String string1) {
-                        IO.log("[Error] " + string);
                         System.err.println(string);
                     }
 
@@ -219,7 +200,6 @@ public class TwitchApp {
 
             @Override
             public void onFailure(int i, String string, String string1) {
-                IO.log("[Error] " + string);
                 System.err.println(string);
             }
 
@@ -252,6 +232,19 @@ public class TwitchApp {
     }
     
     
+    // Find the status of the current stream to display in the title bar
+    public String findStreamerStatus(String url) {
+        
+        String[] temp = url.split("/");
+        
+        for (Stream stream : usersLive) {
+            if (temp[3].equals(stream.getChannel().getName())) {
+                return stream.getChannel().getStatus();
+            }
+        }
+        
+        return "";
+    }
     
     
     
@@ -277,9 +270,10 @@ public class TwitchApp {
     
     
     
-    public EmbeddedMediaPlayerComponent getVideoPlayer() {
-        return this.player.getVideoPlayer();
+    public VideoPlayer getVideoPlayer() {
+        return this.player;
     }
+        
     
     // Return list of users follows who are currently streaming
     public List<Stream> getLiveFollowList() {
