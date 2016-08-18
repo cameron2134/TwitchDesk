@@ -16,7 +16,7 @@ There is very little to do to make TwitchDesk functional, simply extract the con
 In order to use TwitchDesk, you will need:
 
 * <a href="http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html">Java Runtime Environment 8</a> (x64 only, does not work with x86 yet)
-* Have <a href="https://github.com/chrippa/livestreamer/releases>Livestreamer"</a> installed on your system
+* Have <a href="https://github.com/chrippa/livestreamer/releases">Livestreamer</a> installed on your system
 
 
 
