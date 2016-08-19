@@ -31,6 +31,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
+import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * 
@@ -41,8 +42,14 @@ public class GUI extends javax.swing.JFrame {
     private final String VERSION = "Alpha v0.1";
     
     private TwitchApp app;
+    
     private String url;
     private String streamerLink;
+    private String refreshTime;
+    
+    private boolean refreshed;
+    
+    private StopWatch timer;
 
 
     private JSplitPane splitPane;
@@ -56,7 +63,12 @@ public class GUI extends javax.swing.JFrame {
         setUpTray();
         
         applyCSS();
+        
         app = new TwitchApp(this);
+        timer = new StopWatch();
+        
+        refreshed = false;
+        
         this.setTitle("TwitchDesk " + VERSION);
         
         createListeners();
@@ -332,7 +344,7 @@ public class GUI extends javax.swing.JFrame {
         volumeSlider = new javax.swing.JSlider();
         btn_options = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btn_refresh = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         menu_follows = new javax.swing.JMenu();
         menu_About = new javax.swing.JMenu();
@@ -373,7 +385,12 @@ public class GUI extends javax.swing.JFrame {
 
         jLabel1.setText("Volume");
 
-        jButton1.setText("Manual Refresh");
+        btn_refresh.setText("Manual Refresh");
+        btn_refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_refreshActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -393,7 +410,7 @@ public class GUI extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(btn_options)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
+                        .addComponent(btn_refresh)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -402,7 +419,7 @@ public class GUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_options)
-                    .addComponent(jButton1))
+                    .addComponent(btn_refresh))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -513,13 +530,37 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menu_AboutMouseClicked
 
+    private void btn_refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_refreshActionPerformed
+        
+        // Restrict manual refresh to every 5 seconds to prevent API spam
+        if (timer.getTime() > 5000) {
+            refreshed = false;
+            timer.stop();
+            timer.reset();
+        }
+        
+        if (!refreshed) {
+            timer.start();
+            refreshed = true;
+            
+            app.loadData();
+            app.updateGUI();
+            
+        }
+        
+        else
+            System.out.println("Please wait more than 5 seconds before manually refreshing again");
+        
+        
+    }//GEN-LAST:event_btn_refreshActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_options;
+    private javax.swing.JButton btn_refresh;
     private javax.swing.JPanel contentPanel;
     private javax.swing.JPanel followPanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
