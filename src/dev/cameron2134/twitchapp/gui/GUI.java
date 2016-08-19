@@ -4,7 +4,6 @@ package dev.cameron2134.twitchapp.gui;
 import com.mb3364.twitch.api.models.Stream;
 import com.mb3364.twitch.api.models.UserFollow;
 import dev.cameron2134.twitchapp.TwitchApp;
-import dev.cameron2134.twitchapp.utils.IO;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
@@ -33,9 +32,14 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-
+/**
+ * 
+ * @author cameron2134
+ */
 public class GUI extends javax.swing.JFrame {
 
+    private final String VERSION = "Alpha v0.1";
+    
     private TwitchApp app;
     private String url;
     private String streamerLink;
@@ -53,6 +57,7 @@ public class GUI extends javax.swing.JFrame {
         
         applyCSS();
         app = new TwitchApp(this);
+        this.setTitle("TwitchDesk " + VERSION);
         
         createListeners();
         
@@ -333,7 +338,6 @@ public class GUI extends javax.swing.JFrame {
         menu_About = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("TwitchDesk");
 
         videoPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
