@@ -39,7 +39,7 @@ import org.apache.commons.lang3.time.StopWatch;
  */
 public class GUI extends javax.swing.JFrame {
 
-    private final String VERSION = "Alpha v0.1";
+    private final String VERSION = "TwitchDesk Alpha v0.1";
     
     private TwitchApp app;
     
@@ -69,7 +69,7 @@ public class GUI extends javax.swing.JFrame {
         
         refreshed = false;
         
-        this.setTitle("TwitchDesk " + VERSION);
+        this.setTitle(VERSION);
         
         createListeners();
         
@@ -285,7 +285,8 @@ public class GUI extends javax.swing.JFrame {
                     System.out.println(e.getURL());
                     streamerLink = e.getURL().toString();
                     app.initStream(streamerLink);
-                    GUI.this.setTitle(GUI.this.getTitle() + " - " + app.findStreamerStatus(e.getURL().toString()));
+                    
+                    GUI.this.setTitle(VERSION + " - " + app.findStreamerStatus(e.getURL().toString()));
                 }
                 
             }
