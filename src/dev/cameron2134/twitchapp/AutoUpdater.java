@@ -15,6 +15,7 @@ public class AutoUpdater implements Runnable {
     private GUI gui;
     
     private boolean update;
+    private final int UPDATE_TIME = 60000;
     
     
     public AutoUpdater(TwitchApp app, GUI gui) {
@@ -44,13 +45,11 @@ public class AutoUpdater implements Runnable {
                 }
             }
 
-            gui.updateFeatGames();
-            gui.updateLiveFollowers();
-            app.resetDataStatus();
+            app.updateGUI();
 
 
             try {
-                Thread.sleep(60000);
+                Thread.sleep(UPDATE_TIME);
             } 
             
             catch (InterruptedException ex) {

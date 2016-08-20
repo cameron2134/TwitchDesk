@@ -220,6 +220,17 @@ public class TwitchApp {
     
     
     
+    
+    // Updates GUI with the latest API data
+    public void updateGUI() {
+        
+        gui.updateFeatGames();
+        gui.updateLiveFollowers();
+        resetDataStatus();
+    }
+    
+    
+    
     public void initStream(String url) {
         
         if (this.stream != null && stream.isActive())
@@ -247,12 +258,6 @@ public class TwitchApp {
     }
     
     
-    
-    // Automatically update any data that may have changed, e.g. live follows
-    public void refresh() {
-        
-        
-    }
     
     
     

@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,15 +16,14 @@ public class IO {
   
     private static File log = new File("res/data/log.txt");
     
+    
+    
     public static void write(File file, String... options) {
 
         BufferedWriter writer = null;
         
-        // Appends each new option to the options config file
-        
-        
         try {
-            // The boolean value tells the filewriter to append to the text file rather than overwrite
+            
             writer = new BufferedWriter(new FileWriter(file));
 
             for (String option : options) {
@@ -58,7 +56,7 @@ public class IO {
     
     
     
-    // Generic read from file
+    
     public static boolean isEmpty(File file) {
         
         BufferedReader br = null;     
