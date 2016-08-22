@@ -31,9 +31,9 @@ public class VideoPlayer {
             public void mouseClicked(MouseEvent e) {
                 
                 if (player.getMediaPlayer().isPlaying())
-                    player.getMediaPlayer().pause();
+                    pausePlayer();
                 else
-                    player.getMediaPlayer().play();
+                    resumePlayer();
                
             }
             
@@ -49,6 +49,14 @@ public class VideoPlayer {
     public void stopPlayer() {
         this.player.getMediaPlayer().stop();
         
+    }
+    
+    public void pausePlayer() {
+        this.player.getMediaPlayer().pause();
+    }
+    
+    public void resumePlayer() {
+        this.player.getMediaPlayer().play();
     }
     
     

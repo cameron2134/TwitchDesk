@@ -4,6 +4,7 @@ package dev.cameron2134.twitchapp.gui;
 import com.mb3364.twitch.api.models.Stream;
 import com.mb3364.twitch.api.models.UserFollow;
 import dev.cameron2134.twitchapp.TwitchApp;
+import dev.cameron2134.twitchapp.utils.IO;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
@@ -16,8 +17,11 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,19 +39,21 @@ import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * 
- * @author cameron2134
+ * @author cameron2134 https://github.com/cameron2134/TwitchDesk
+ * @version alpha v0.2.1
  */
 public class GUI extends javax.swing.JFrame {
 
-    private final String VERSION = "TwitchDesk Alpha v0.1";
+    private final String VERSION = "TwitchDesk Alpha v0.2.1";
     
     private TwitchApp app;
+    private SetupGUI setupGUI;
     
     private String url;
     private String streamerLink;
     private String refreshTime;
     
-    private boolean refreshed;
+    private boolean refreshed, pauseOnMin, minToTray;
     
     private StopWatch timer;
 
@@ -60,12 +66,25 @@ public class GUI extends javax.swing.JFrame {
         feel();
         initComponents();
         
-        setUpTray();
+        if (new File("res/data/settings.cfg").exists() && !IO.isEmpty(new File("res/data/settings.cfg"))) {
+            String[] temp = IO.readMultiple(new File("res/data/settings.cfg"));
+            pauseOnMin = Boolean.parseBoolean(temp[0]);
+            
+            minToTray = Boolean.parseBoolean(temp[1]);
+        }
+        
+        else
+            minToTray = pauseOnMin = false;
+        
+        
+        if (minToTray)
+            setUpTray();
         
         applyCSS();
         
         app = new TwitchApp(this);
         timer = new StopWatch();
+        setupGUI = new SetupGUI(this, pauseOnMin, minToTray);
         
         refreshed = false;
         
@@ -195,67 +214,66 @@ public class GUI extends javax.swing.JFrame {
     
 
     private void setUpTray() {
+            
         Image img = Toolkit.getDefaultToolkit().getImage("res/img/twitch.png");
-        
+
         //Check the SystemTray is supported
         if (!SystemTray.isSupported()) {
             System.err.println("SystemTray is not supported");
             return;
         }
-        
+
         PopupMenu popup = new PopupMenu();
         TrayIcon trayIcon = new TrayIcon(img, "TwitchDesk", popup);
         trayIcon.setImageAutoSize(true);
-        
+
         SystemTray tray = SystemTray.getSystemTray();
-       
+
 
         MenuItem aboutItem = new MenuItem("Show");
         popup.add(aboutItem);
-       
 
-        
-        
-        
-        
+
+
         // When the application is minimized, hide it in the tray.
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowIconified(WindowEvent e) {
-                
+
                 //Hides it from screen
                 GUI.this.setState(GUI.ICONIFIED);
                 //Hides it from taskbar and screen
                 GUI.this.setVisible(false);
-                
+
                 try {
                     tray.add(trayIcon);
                 } 
-                
+
                 catch (AWTException ex) {
                     System.err.println("TrayIcon could not be added.");
                 }
-                
+
             }
         });
-        
-        
-        
+
+
+
         // Restore the frame from system tray
         trayIcon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                
+
                 GUI.this.setVisible(true);
                 GUI.this.setState (GUI.this.NORMAL);
-                
-                
+
+
                 tray.remove(trayIcon);
 
             }
         });
         
         
+
     }
     
     
@@ -294,10 +312,39 @@ public class GUI extends javax.swing.JFrame {
         
         });
         
+        
+        
+        
+        if (pauseOnMin) {
+            this.addWindowStateListener(new WindowAdapter() {
+                @Override
+                public void windowStateChanged(WindowEvent e) {
+
+                    if ((e.getNewState() & GUI.this.ICONIFIED) == GUI.this.ICONIFIED) {
+                        app.getVideoPlayer().pausePlayer();
+                    }
+
+                    else                
+                        app.getVideoPlayer().resumePlayer();
+
+                }
+
+
+            });
+        }
 
     }
     
     
+    
+    
+    public void setMinToTray(boolean value) {
+        this.minToTray = value;
+    }
+    
+    public void setPauseOnMin(boolean value) {
+        this.pauseOnMin = value;
+    }
     
     
     public TwitchApp getApp() {
@@ -503,20 +550,27 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_optionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_optionsActionPerformed
-        new SetupGUI(this).setVisible(true);
+        
+        if (!setupGUI.isVisible()) 
+            setupGUI.setVisible(true);
+        
+        
+        else 
+            setupGUI.setVisible(false);
+        
     }//GEN-LAST:event_btn_optionsActionPerformed
 
     private void menu_followsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_followsMouseClicked
         if (menu_follows.getText().equals("Hide Side Panel")) {
             
             menu_follows.setText("Show Side Panel");
-            //followPanel.setVisible(false);
+            
             splitPane.remove(followPanel);
         }
         
         else {
             menu_follows.setText("Hide Side Panel");
-            //followPanel.setVisible(true);
+            
             splitPane.setRightComponent(followPanel);
         }
     }//GEN-LAST:event_menu_followsMouseClicked

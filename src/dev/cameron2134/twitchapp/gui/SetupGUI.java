@@ -3,10 +3,7 @@ package dev.cameron2134.twitchapp.gui;
 
 import dev.cameron2134.twitchapp.livestreamer.LivestreamerSetup;
 import dev.cameron2134.twitchapp.utils.IO;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
-import javax.swing.ImageIcon;
 
 
 public class SetupGUI extends javax.swing.JFrame {
@@ -15,9 +12,11 @@ public class SetupGUI extends javax.swing.JFrame {
     private LivestreamerSetup setup;
     private GUI gui;
     
+    private final File options = new File("res/data/settings.cfg");
+    
 
 
-    public SetupGUI(GUI gui) {
+    public SetupGUI(GUI gui, boolean pauseOnMin, boolean minToTray) {
         feel();
         initComponents();
 
@@ -27,7 +26,9 @@ public class SetupGUI extends javax.swing.JFrame {
         TF_livestreamer.setText(setup.getVLCPath());
         TF_args.setText(setup.getArgs());
         CB_quality.setSelectedItem(setup.getQuality());
-    
+        
+        check_pause.setSelected(pauseOnMin);
+        check_tray.setSelected(minToTray);
         
         
         
@@ -83,8 +84,9 @@ public class SetupGUI extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
         CB_quality = new javax.swing.JComboBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
+        check_pause = new javax.swing.JCheckBox();
+        check_tray = new javax.swing.JCheckBox();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Settings");
@@ -114,11 +116,13 @@ public class SetupGUI extends javax.swing.JFrame {
         jLabel20.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         jLabel20.setText("Livestreamer Path");
 
+        TF_livestreamer.setFont(new java.awt.Font("Trebuchet MS", 0, 11)); // NOI18N
         TF_livestreamer.setText("jTextField2");
 
         jLabel11.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         jLabel11.setText("Arguments");
 
+        TF_args.setFont(new java.awt.Font("Trebuchet MS", 0, 11)); // NOI18N
         TF_args.setText("jTextField3");
 
         btn_save.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
@@ -136,17 +140,15 @@ public class SetupGUI extends javax.swing.JFrame {
         jLabel1.setText("Quality");
 
         CB_quality.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Source", "High", "Medium", "Low" }));
-        CB_quality.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CB_qualityActionPerformed(evt);
-            }
-        });
 
-        jCheckBox3.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
-        jCheckBox3.setText("Pause on minimize");
+        check_pause.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
+        check_pause.setText("Pause on minimize");
 
-        jCheckBox4.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
-        jCheckBox4.setText("Don't minimize to tray");
+        check_tray.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
+        check_tray.setText("Minimize to tray");
+
+        jLabel2.setFont(new java.awt.Font("Trebuchet MS", 3, 10)); // NOI18N
+        jLabel2.setText("These two settings require a restart");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -167,15 +169,16 @@ public class SetupGUI extends javax.swing.JFrame {
                             .addComponent(jLabel20)
                             .addComponent(TF_livestreamer, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 210, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
-                            .addComponent(jCheckBox4)
-                            .addComponent(jCheckBox3)
+                            .addComponent(check_tray)
+                            .addComponent(check_pause)
                             .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1)
-                            .addComponent(CB_quality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(110, 110, 110))))
+                            .addComponent(CB_quality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addGap(52, 52, 52))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -193,9 +196,7 @@ public class SetupGUI extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(TF_args, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 129, Short.MAX_VALUE)
-                        .addComponent(btn_save))
+                        .addComponent(TF_args, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -207,10 +208,13 @@ public class SetupGUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(CB_quality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jCheckBox3)
+                        .addComponent(check_pause)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jCheckBox4)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(check_tray)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                .addComponent(btn_save)
                 .addContainerGap())
         );
 
@@ -284,16 +288,16 @@ public class SetupGUI extends javax.swing.JFrame {
         setup.setQuality(CB_quality.getSelectedItem().toString());
         setup.setLivestreamerPath(TF_livestreamer.getText());
         
+        gui.setMinToTray(check_tray.isSelected());
+        gui.setPauseOnMin(check_pause.isSelected());
+        
         IO.write(new File("res/data/livestreamer.cfg"), "path=" + TF_livestreamer.getText(),  "args=" + TF_args.getText(), "quality=" + CB_quality.getSelectedItem().toString());
+        IO.write(options, "pause_on_min=" + check_pause.isSelected(), "min_to_tray=" + check_tray.isSelected());
         
         gui.getApp().initStream(gui.getStreamerLink());
         
         this.dispose();
     }//GEN-LAST:event_btn_saveActionPerformed
-
-    private void CB_qualityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CB_qualityActionPerformed
-        
-    }//GEN-LAST:event_CB_qualityActionPerformed
 
 
 
@@ -302,12 +306,13 @@ public class SetupGUI extends javax.swing.JFrame {
     private javax.swing.JTextField TF_args;
     private javax.swing.JTextField TF_livestreamer;
     private javax.swing.JButton btn_save;
+    private javax.swing.JCheckBox check_pause;
+    private javax.swing.JCheckBox check_tray;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
