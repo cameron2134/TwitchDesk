@@ -28,6 +28,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -65,6 +66,11 @@ public class GUI extends javax.swing.JFrame {
         
         feel();
         initComponents();
+        
+        
+        ImageIcon frameIcon = new ImageIcon("res/img/twitch.png");
+        this.setIconImage(frameIcon.getImage());
+        
         
         if (new File("res/data/settings.cfg").exists() && !IO.isEmpty(new File("res/data/settings.cfg"))) {
             String[] temp = IO.readMultiple(new File("res/data/settings.cfg"));

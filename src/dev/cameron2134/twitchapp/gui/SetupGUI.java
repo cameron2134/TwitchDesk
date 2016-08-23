@@ -4,6 +4,7 @@ package dev.cameron2134.twitchapp.gui;
 import dev.cameron2134.twitchapp.livestreamer.LivestreamerSetup;
 import dev.cameron2134.twitchapp.utils.IO;
 import java.io.File;
+import javax.swing.ImageIcon;
 
 
 public class SetupGUI extends javax.swing.JFrame {
@@ -19,6 +20,9 @@ public class SetupGUI extends javax.swing.JFrame {
     public SetupGUI(GUI gui, boolean pauseOnMin, boolean minToTray) {
         feel();
         initComponents();
+        
+        ImageIcon frameIcon = new ImageIcon("res/img/twitch.png");
+        this.setIconImage(frameIcon.getImage());
 
         this.setup = new LivestreamerSetup();
         this.gui = gui;
