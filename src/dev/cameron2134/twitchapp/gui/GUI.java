@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,6 +50,8 @@ public class GUI extends javax.swing.JFrame {
     
     private TwitchApp app;
     private SetupGUI setupGUI;
+    
+    private DecimalFormat df;
     
     private String url;
     private String streamerLink;
@@ -89,7 +92,10 @@ public class GUI extends javax.swing.JFrame {
         applyCSS();
         
         app = new TwitchApp(this);
+        
         timer = new StopWatch();
+        df = new DecimalFormat("#,###");
+        
         setupGUI = new SetupGUI(this, pauseOnMin, minToTray);
         
         refreshed = false;
@@ -143,7 +149,7 @@ public class GUI extends javax.swing.JFrame {
 
                 }
                 
-                liveFollows += "<a href='http://twitch.tv/" + liveFollowList.get(i).getChannel().getName() + "'>" + liveFollowList.get(i).getChannel().getDisplayName() + "</a> <br> <div class='streamGame'> Playing " + liveFollowList.get(i).getChannel().getGame() + ", " + liveFollowList.get(i).getViewers() + " viewers </div> <br><br>";
+                liveFollows += "<a href='http://twitch.tv/" + liveFollowList.get(i).getChannel().getName() + "'>" + liveFollowList.get(i).getChannel().getDisplayName() + "</a> <br> <div class='streamGame'> Playing " + liveFollowList.get(i).getChannel().getGame() + ", " + df.format(liveFollowList.get(i).getViewers()) + " viewers </div> <br><br>";
             }
         }
         
