@@ -84,11 +84,17 @@ public class GUI extends javax.swing.JFrame {
         
         
         if (new File("res/data/settings.cfg").exists() && !IO.isEmpty(new File("res/data/settings.cfg"))) {
-            String[] temp = IO.readMultiple(new File("res/data/settings.cfg"));
+            try {
+                String[] temp = IO.readMultiple(new File("res/data/settings.cfg"));
+
+                pauseOnMin = Boolean.parseBoolean(temp[0]);
+                minToTray = Boolean.parseBoolean(temp[1]);
+                showNotifications = Boolean.parseBoolean(temp[2]);
+            }
             
-            pauseOnMin = Boolean.parseBoolean(temp[0]);
-            minToTray = Boolean.parseBoolean(temp[1]);
-            showNotifications = Boolean.parseBoolean(temp[2]);
+            catch (ArrayIndexOutOfBoundsException ex) {
+                minToTray = pauseOnMin = showNotifications = false;
+            }
         }
         
         else
