@@ -42,11 +42,11 @@ import org.apache.commons.lang3.time.StopWatch;
 /**
  * 
  * @author cameron2134 https://github.com/cameron2134/TwitchDesk
- * @version alpha v0.2.1
+ * @version alpha v0.3.1
  */
 public class GUI extends javax.swing.JFrame {
 
-    private final String VERSION = "TwitchDesk Alpha v0.2.1";
+    private final String VERSION = "TwitchDesk Alpha v0.3.1";
     
     private TwitchApp app;
     private SetupGUI setupGUI;
@@ -57,12 +57,20 @@ public class GUI extends javax.swing.JFrame {
     private String streamerLink;
     private String refreshTime;
     
-    private boolean refreshed, pauseOnMin, minToTray;
+    private boolean refreshed, pauseOnMin, minToTray, showNotifications;
     
     private StopWatch timer;
 
 
     private JSplitPane splitPane;
+    
+    private PopupMenu popup;
+    private TrayIcon trayIcon;
+    
+    private List<Stream> liveFollowList;
+    private List<UserFollow> followList;
+
+    private List<Stream> previousOnlineFollows;
     
     
     public GUI() {
@@ -77,13 +85,14 @@ public class GUI extends javax.swing.JFrame {
         
         if (new File("res/data/settings.cfg").exists() && !IO.isEmpty(new File("res/data/settings.cfg"))) {
             String[] temp = IO.readMultiple(new File("res/data/settings.cfg"));
-            pauseOnMin = Boolean.parseBoolean(temp[0]);
             
+            pauseOnMin = Boolean.parseBoolean(temp[0]);
             minToTray = Boolean.parseBoolean(temp[1]);
+            showNotifications = Boolean.parseBoolean(temp[2]);
         }
         
         else
-            minToTray = pauseOnMin = false;
+            minToTray = pauseOnMin = showNotifications = false;
         
         
         if (minToTray)
@@ -96,7 +105,7 @@ public class GUI extends javax.swing.JFrame {
         timer = new StopWatch();
         df = new DecimalFormat("#,###");
         
-        setupGUI = new SetupGUI(this, pauseOnMin, minToTray);
+        setupGUI = new SetupGUI(this, pauseOnMin, minToTray, showNotifications);
         
         refreshed = false;
         
@@ -132,26 +141,43 @@ public class GUI extends javax.swing.JFrame {
         String liveFollows = "";
         String offlineFollows = "";
         
-        List<Stream> liveFollowList = app.getLiveFollowList();
-        List<UserFollow> followList = app.getFollowList();
-
+        // Compare the follows online in the last update to see if anyone new is online to notify the user about
+        previousOnlineFollows = liveFollowList;
         
+        liveFollowList = app.getLiveFollowList();
+        followList = app.getFollowList();
+        
+
         // Show live follows
         if (!liveFollowList.isEmpty()) {
             for (int i = 0; i < liveFollowList.size(); i++) {
                 
-                // If the person is live, don't show them in the offline list  
+                // If the person is live, don't show them in the offline list
                 for (int x = 0; x < followList.size(); x++) {
                       
                     if (followList.get(x).getChannel().getDisplayName().equals(liveFollowList.get(i).getChannel().getDisplayName())) {
                         followList.remove(x);
+                        
                     }
 
                 }
                 
                 liveFollows += "<a href='http://twitch.tv/" + liveFollowList.get(i).getChannel().getName() + "'>" + liveFollowList.get(i).getChannel().getDisplayName() + "</a> <br> <div class='streamGame'> Playing " + liveFollowList.get(i).getChannel().getGame() + ", " + df.format(liveFollowList.get(i).getViewers()) + " viewers </div> <br><br>";
+
+            }
+            
+            // If the app is in the system tray, throw a notification when a new streamer is online
+            if (GUI.this.getState() == GUI.ICONIFIED && showNotifications) {
+                
+                for (Stream stream : liveFollowList) {
+                    
+                    if (!previousOnlineFollows.contains(stream)) {
+                        displayBalloonMsg(stream.getChannel().getDisplayName() + " is now streaming.");
+                    }
+                }
             }
         }
+        
         
         
         // Display offline follows
@@ -164,20 +190,11 @@ public class GUI extends javax.swing.JFrame {
         String html = "<html> <body> <h1> You Follow </h1> <h2> Live: </h2>" + liveFollows + " <hr> <h2> Offline: </h2>" + offlineFollows + "</body> </html>";
         streamerPane.setText(html);
         
+        
     }
     
 
-    
-    
-    
-    public void updateFeatGames() {
-        
-        //String html = "<iframe src='http://player.twitch.tv/?channel={CohhCarnage}' height='720' width='1280' frameborder='0' scrolling='no'allowfullscreen='true'></iframe>";
-        //JWebBrowser x;
-        //String html = "<html> <body> <h1> Featured Games </h1> </body> </html>";
-        //mainPane.setText(html);
-    }
-    
+   
 
     
     
@@ -223,11 +240,15 @@ public class GUI extends javax.swing.JFrame {
 
 
     
+    public void displayBalloonMsg(String msg) {
+        trayIcon.displayMessage("TwitchDesk", msg, TrayIcon.MessageType.INFO);
+    }
+    
+    
+    
     
 
     private void setUpTray() {
-            
-        Image img = Toolkit.getDefaultToolkit().getImage("res/img/twitch.png");
 
         //Check the SystemTray is supported
         if (!SystemTray.isSupported()) {
@@ -235,12 +256,12 @@ public class GUI extends javax.swing.JFrame {
             return;
         }
 
-        PopupMenu popup = new PopupMenu();
-        TrayIcon trayIcon = new TrayIcon(img, "TwitchDesk", popup);
+        popup = new PopupMenu();
+        trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage("res/img/twitch.png"), "TwitchDesk", popup);
         trayIcon.setImageAutoSize(true);
 
         SystemTray tray = SystemTray.getSystemTray();
-
+        
 
         MenuItem aboutItem = new MenuItem("Show");
         popup.add(aboutItem);
@@ -259,6 +280,7 @@ public class GUI extends javax.swing.JFrame {
 
                 try {
                     tray.add(trayIcon);
+                    
                 } 
 
                 catch (AWTException ex) {
@@ -357,6 +379,11 @@ public class GUI extends javax.swing.JFrame {
     public void setPauseOnMin(boolean value) {
         this.pauseOnMin = value;
     }
+    
+    public void notificationsEnabled(boolean value) {
+        this.showNotifications = value;
+    }
+    
     
     
     public TwitchApp getApp() {

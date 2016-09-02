@@ -17,7 +17,7 @@ public class SetupGUI extends javax.swing.JFrame {
     
 
 
-    public SetupGUI(GUI gui, boolean pauseOnMin, boolean minToTray) {
+    public SetupGUI(GUI gui, boolean pauseOnMin, boolean minToTray, boolean notificationsEnabled) {
         feel();
         initComponents();
         
@@ -33,6 +33,7 @@ public class SetupGUI extends javax.swing.JFrame {
         
         check_pause.setSelected(pauseOnMin);
         check_tray.setSelected(minToTray);
+        check_notifications.setSelected(notificationsEnabled);
         
         
         
@@ -91,6 +92,7 @@ public class SetupGUI extends javax.swing.JFrame {
         check_pause = new javax.swing.JCheckBox();
         check_tray = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
+        check_notifications = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Settings");
@@ -146,13 +148,16 @@ public class SetupGUI extends javax.swing.JFrame {
         CB_quality.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Source", "High", "Medium", "Low" }));
 
         check_pause.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
-        check_pause.setText("Pause on minimize");
+        check_pause.setText("Pause on minimize *");
 
         check_tray.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
-        check_tray.setText("Minimize to tray");
+        check_tray.setText("Minimize to tray *");
 
         jLabel2.setFont(new java.awt.Font("Trebuchet MS", 3, 10)); // NOI18N
-        jLabel2.setText("These two settings require a restart");
+        jLabel2.setText("* indicates a restart is required");
+
+        check_notifications.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
+        check_notifications.setText("Enable streamer notifications");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -162,7 +167,8 @@ public class SetupGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_save)
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -173,7 +179,7 @@ public class SetupGUI extends javax.swing.JFrame {
                             .addComponent(jLabel20)
                             .addComponent(TF_livestreamer, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 210, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 206, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
                             .addComponent(check_tray)
@@ -181,7 +187,7 @@ public class SetupGUI extends javax.swing.JFrame {
                             .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1)
                             .addComponent(CB_quality, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
+                            .addComponent(check_notifications))
                         .addGap(52, 52, 52))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -215,10 +221,12 @@ public class SetupGUI extends javax.swing.JFrame {
                         .addComponent(check_pause)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(check_tray)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
-                .addComponent(btn_save)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(check_notifications)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 101, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_save)
+                    .addComponent(jLabel2))
                 .addContainerGap())
         );
 
@@ -294,9 +302,10 @@ public class SetupGUI extends javax.swing.JFrame {
         
         gui.setMinToTray(check_tray.isSelected());
         gui.setPauseOnMin(check_pause.isSelected());
+        gui.notificationsEnabled(check_notifications.isSelected());
         
         IO.write(new File("res/data/livestreamer.cfg"), "path=" + TF_livestreamer.getText(),  "args=" + TF_args.getText(), "quality=" + CB_quality.getSelectedItem().toString());
-        IO.write(options, "pause_on_min=" + check_pause.isSelected(), "min_to_tray=" + check_tray.isSelected());
+        IO.write(options, "pause_on_min=" + check_pause.isSelected(), "min_to_tray=" + check_tray.isSelected(), "enable_notifications=" + check_notifications.isSelected());
         
         gui.getApp().initStream(gui.getStreamerLink());
         
@@ -310,6 +319,7 @@ public class SetupGUI extends javax.swing.JFrame {
     private javax.swing.JTextField TF_args;
     private javax.swing.JTextField TF_livestreamer;
     private javax.swing.JButton btn_save;
+    private javax.swing.JCheckBox check_notifications;
     private javax.swing.JCheckBox check_pause;
     private javax.swing.JCheckBox check_tray;
     private javax.swing.JButton jButton2;
