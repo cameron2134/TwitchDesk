@@ -439,6 +439,7 @@ public class GUI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         btn_refresh = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
+        menu_chat = new javax.swing.JMenu();
         menu_follows = new javax.swing.JMenu();
         menu_About = new javax.swing.JMenu();
 
@@ -561,7 +562,17 @@ public class GUI extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        menu_chat.setText("Show Popout Chat");
+        menu_chat.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        menu_chat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menu_chatMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(menu_chat);
+
         menu_follows.setText("Hide Side Panel");
+        menu_follows.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         menu_follows.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menu_followsMouseClicked(evt);
@@ -570,6 +581,7 @@ public class GUI extends javax.swing.JFrame {
         jMenuBar1.add(menu_follows);
 
         menu_About.setText("About");
+        menu_About.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         menu_About.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menu_AboutMouseClicked(evt);
@@ -654,6 +666,16 @@ public class GUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btn_refreshActionPerformed
 
+    private void menu_chatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_chatMouseClicked
+        try {
+            Desktop.getDesktop().browse(new URI(streamerLink + "/chat?popout="));
+        } 
+        
+        catch (URISyntaxException | IOException ex) {
+            System.err.println(ex.toString());
+        }
+    }//GEN-LAST:event_menu_chatMouseClicked
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -666,6 +688,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenu menu_About;
+    private javax.swing.JMenu menu_chat;
     private javax.swing.JMenu menu_follows;
     private javax.swing.JEditorPane streamerPane;
     private javax.swing.JPanel videoPanel;
