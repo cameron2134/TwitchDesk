@@ -156,6 +156,9 @@ public class GUI extends javax.swing.JFrame {
 
         // Show live follows
         if (!liveFollowList.isEmpty()) {
+            
+            String game;
+            
             for (int i = 0; i < liveFollowList.size(); i++) {
                 
                 // If the person is live, don't show them in the offline list
@@ -168,7 +171,12 @@ public class GUI extends javax.swing.JFrame {
 
                 }
                 
-                liveFollows += "<a href='http://twitch.tv/" + liveFollowList.get(i).getChannel().getName() + "'>" + liveFollowList.get(i).getChannel().getDisplayName() + "</a> <br> <div class='streamGame'> Playing " + liveFollowList.get(i).getChannel().getGame() + ", " + df.format(liveFollowList.get(i).getViewers()) + " viewers </div> <br><br>";
+                if (liveFollowList.get(i).getChannel().getGame() == null)
+                    game = "N/A";
+                else
+                    game = liveFollowList.get(i).getChannel().getGame();
+                    
+                liveFollows += "<a href='http://twitch.tv/" + liveFollowList.get(i).getChannel().getName() + "'>" + liveFollowList.get(i).getChannel().getDisplayName() + "</a> <br> <div class='streamGame'> Playing " + game + ", " + df.format(liveFollowList.get(i).getViewers()) + " viewers </div> <br><br>";
 
             }
             
