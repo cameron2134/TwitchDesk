@@ -42,11 +42,11 @@ import org.apache.commons.lang3.time.StopWatch;
 /**
  * 
  * @author cameron2134 https://github.com/cameron2134/TwitchDesk
- * @version alpha v0.3.1
+ * @version alpha v0.3.2
  */
 public class GUI extends javax.swing.JFrame {
 
-    private final String VERSION = "TwitchDesk Alpha v0.3.1";
+    private final String VERSION = "TwitchDesk Alpha v0.3.2";
     
     private TwitchApp app;
     private SetupGUI setupGUI;
@@ -671,6 +671,8 @@ public class GUI extends javax.swing.JFrame {
         else
             System.out.println("Please wait more than 5 seconds before manually refreshing again");
         
+        // Prevent the scroll bar from moving to the last position on refresh
+        streamerPane.setCaretPosition(0);
         
     }//GEN-LAST:event_btn_refreshActionPerformed
 
