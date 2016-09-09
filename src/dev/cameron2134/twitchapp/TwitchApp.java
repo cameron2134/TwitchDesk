@@ -224,7 +224,6 @@ public class TwitchApp {
     // Updates GUI with the latest API data
     public void updateGUI() {
         
-        gui.updateFeatGames();
         gui.updateLiveFollowers();
         resetDataStatus();
     }
