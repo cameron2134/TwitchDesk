@@ -67,6 +67,11 @@ public class Livestream implements Runnable {
         catch (NullPointerException ex) {
             System.err.println(ex);
             IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
+
+            JOptionPane.showMessageDialog(null,
+                    "Streamer not found or not online",
+                    "Error starting stream",
+                    JOptionPane.ERROR_MESSAGE);
         }
         
     }

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -329,6 +330,18 @@ public class GUI extends javax.swing.JFrame {
     
     
     
+    private void initiateStream(String url) {
+        
+        System.out.println(url);
+        streamerLink = url;
+        app.initStream(streamerLink);
+
+        GUI.this.setTitle(VERSION + " - " + app.findStreamerStatus(url));
+        
+    }
+    
+    
+    
     private void createListeners() {
         
         // Video player volume
@@ -343,6 +356,23 @@ public class GUI extends javax.swing.JFrame {
         
         
         
+        menu_findStreamer.addMouseListener(new MouseAdapter() {
+            
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            
+                String streamerUsername = JOptionPane.showInputDialog(null,
+                        "Enter a streamers username:",
+                        "Find a Streamer",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                if (streamerUsername != null)
+                    initiateStream("http://twitch.tv/" + streamerUsername);
+
+            }
+        });
+        
+        
         // Follow pane hyperlinks
         streamerPane.addHyperlinkListener(new HyperlinkListener() {
 
@@ -350,11 +380,7 @@ public class GUI extends javax.swing.JFrame {
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     
-                    System.out.println(e.getURL());
-                    streamerLink = e.getURL().toString();
-                    app.initStream(streamerLink);
-                    
-                    GUI.this.setTitle(VERSION + " - " + app.findStreamerStatus(e.getURL().toString()));
+                    initiateStream(e.getURL().toString());
                 }
                 
             }
@@ -451,6 +477,7 @@ public class GUI extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         menu_follows = new javax.swing.JMenu();
         menu_chat = new javax.swing.JMenu();
+        menu_findStreamer = new javax.swing.JMenu();
         menu_About = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -589,6 +616,15 @@ public class GUI extends javax.swing.JFrame {
         });
         jMenuBar1.add(menu_chat);
 
+        menu_findStreamer.setText("Find Streamer");
+        menu_findStreamer.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        menu_findStreamer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menu_findStreamerMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(menu_findStreamer);
+
         menu_About.setText("About");
         menu_About.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         menu_About.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -689,6 +725,10 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menu_chatMouseClicked
 
+    private void menu_findStreamerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_findStreamerMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menu_findStreamerMouseClicked
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -702,6 +742,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JMenu menu_About;
     private javax.swing.JMenu menu_chat;
+    private javax.swing.JMenu menu_findStreamer;
     private javax.swing.JMenu menu_follows;
     private javax.swing.JEditorPane streamerPane;
     private javax.swing.JPanel videoPanel;
