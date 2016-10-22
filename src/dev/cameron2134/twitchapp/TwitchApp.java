@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 
@@ -91,7 +92,8 @@ public class TwitchApp {
             } 
             
             catch (URISyntaxException ex) {
-                System.err.println(ex.toString());
+                System.err.println(ex);
+                IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
             }
 
             String auth = twitch.auth().getAuthenticationUrl(twitch.getClientId(), callbackUri, Scopes.USER_READ, Scopes.CHANNEL_READ, Scopes.CHANNEL_STREAM);
@@ -102,7 +104,8 @@ public class TwitchApp {
             } 
             
             catch (URISyntaxException ex) {
-                System.err.println(ex.toString());
+                System.err.println(ex);
+                IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
             }
             
             try {
@@ -110,7 +113,8 @@ public class TwitchApp {
             } 
             
             catch (IOException ex) {
-                System.err.println(ex.toString());
+                System.err.println(ex);
+                IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
             }
 
 

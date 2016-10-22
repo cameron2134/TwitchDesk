@@ -5,6 +5,7 @@ import dev.cameron2134.twitchapp.gui.GUI;
 import dev.cameron2134.twitchapp.utils.IO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 
 public class AutoUpdater implements Runnable {
@@ -41,7 +42,8 @@ public class AutoUpdater implements Runnable {
                 } 
                 
                 catch (InterruptedException ex) {
-                    System.err.println(ex.toString());
+                    System.err.println(ex);
+                    IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
                 }
             }
 
@@ -53,7 +55,8 @@ public class AutoUpdater implements Runnable {
             } 
             
             catch (InterruptedException ex) {
-                System.err.println(ex.toString());
+                System.err.println(ex);
+                IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
             }
         }
     }

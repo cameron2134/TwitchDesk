@@ -37,16 +37,17 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * 
  * @author cameron2134 https://github.com/cameron2134/TwitchDesk
- * @version alpha v0.3.2
+ * @version alpha v0.4.3
  */
 public class GUI extends javax.swing.JFrame {
 
-    private final String VERSION = "TwitchDesk Alpha v0.3.2";
+    private final String VERSION = "TwitchDesk Alpha v0.4.3";
     
     private TwitchApp app;
     private SetupGUI setupGUI;
@@ -299,6 +300,7 @@ public class GUI extends javax.swing.JFrame {
 
                 catch (AWTException ex) {
                     System.err.println("TrayIcon could not be added.");
+                    IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
                 }
 
             }
@@ -447,8 +449,8 @@ public class GUI extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         btn_refresh = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
-        menu_chat = new javax.swing.JMenu();
         menu_follows = new javax.swing.JMenu();
+        menu_chat = new javax.swing.JMenu();
         menu_About = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -474,7 +476,6 @@ public class GUI extends javax.swing.JFrame {
         jScrollPane1.setViewportView(streamerPane);
 
         volumeSlider.setMajorTickSpacing(25);
-        volumeSlider.setMinorTickSpacing(15);
         volumeSlider.setPaintLabels(true);
         volumeSlider.setPaintTicks(true);
 
@@ -570,15 +571,6 @@ public class GUI extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        menu_chat.setText("Show Popout Chat");
-        menu_chat.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        menu_chat.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menu_chatMouseClicked(evt);
-            }
-        });
-        jMenuBar1.add(menu_chat);
-
         menu_follows.setText("Hide Side Panel");
         menu_follows.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         menu_follows.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -587,6 +579,15 @@ public class GUI extends javax.swing.JFrame {
             }
         });
         jMenuBar1.add(menu_follows);
+
+        menu_chat.setText("Show Popout Chat");
+        menu_chat.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        menu_chat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menu_chatMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(menu_chat);
 
         menu_About.setText("About");
         menu_About.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -642,11 +643,12 @@ public class GUI extends javax.swing.JFrame {
 
     private void menu_AboutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_AboutMouseClicked
         try {
-            Desktop.getDesktop().browse(new URI("https://github.com/cameron2134/TwitchDesk"));
+            Desktop.getDesktop().browse(new URI("httpsgithub.com/cameron2134TwitchDesk"));
         } 
         
         catch (URISyntaxException | IOException ex) {
-            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println(ex);
+            IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
         }
     }//GEN-LAST:event_menu_AboutMouseClicked
 
@@ -682,7 +684,8 @@ public class GUI extends javax.swing.JFrame {
         } 
         
         catch (URISyntaxException | IOException ex) {
-            System.err.println(ex.toString());
+            System.err.println(ex);
+            IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
         }
     }//GEN-LAST:event_menu_chatMouseClicked
 

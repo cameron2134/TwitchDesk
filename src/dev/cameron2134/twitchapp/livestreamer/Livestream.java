@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import javax.swing.JOptionPane;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 
 public class Livestream implements Runnable {
@@ -59,11 +60,13 @@ public class Livestream implements Runnable {
         } 
         
         catch (IOException ex) {
-            System.err.println(ex.toString());
+            System.err.println(ex);
+            IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
         }
         
         catch (NullPointerException ex) {
             System.err.println(ex);
+            IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
         }
         
     }
