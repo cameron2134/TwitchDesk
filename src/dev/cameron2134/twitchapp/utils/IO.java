@@ -8,7 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -170,6 +173,39 @@ public class IO {
     
     
 
+    
+    public static void writeDebugLog(String msg) {
+        
+        BufferedWriter writer = null;
+        
+        Date currDate = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        
+        try {
+            
+            writer = new BufferedWriter(new FileWriter(log, true));
+
+            writer.write("[ERROR]\n");
+            writer.write("[" + dateFormat.format(currDate) + "]: " + msg);
+            writer.write("[END ERROR]\n\n");
+
+        } 
+        
+        catch (IOException ex) {
+            System.out.println(ex.toString());
+            
+        } 
+        
+        finally {
+            try {
+                writer.close();
+            }
+            catch (Exception ex) {
+                System.out.println(ex.toString());
+            }
+        }
+        
+    }
     
     
 }

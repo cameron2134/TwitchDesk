@@ -1,10 +1,11 @@
 
 package dev.cameron2134.twitchapp;
 
-import dev.cameron2134.twitchapp.gui.GUI;
+import dev.cameron2134.twitchapp.gui.StreamUI;
 import dev.cameron2134.twitchapp.utils.IO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 
 public class AutoUpdater implements Runnable {
@@ -12,13 +13,13 @@ public class AutoUpdater implements Runnable {
     // Auto refreshes API data every x minutes/seconds that the user specifies
     
     private TwitchApp app;
-    private GUI gui;
+    private StreamUI gui;
     
     private boolean update;
     private final int UPDATE_TIME = 60000;
     
     
-    public AutoUpdater(TwitchApp app, GUI gui) {
+    public AutoUpdater(TwitchApp app, StreamUI gui) {
         
         this.app = app;
         this.gui = gui;
@@ -37,11 +38,12 @@ public class AutoUpdater implements Runnable {
         
             while (!app.isDataReady()) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } 
                 
                 catch (InterruptedException ex) {
-                    System.err.println(ex.toString());
+                    System.err.println(ex);
+                    IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
                 }
             }
 
@@ -53,7 +55,8 @@ public class AutoUpdater implements Runnable {
             } 
             
             catch (InterruptedException ex) {
-                System.err.println(ex.toString());
+                System.err.println(ex);
+                IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
             }
         }
     }

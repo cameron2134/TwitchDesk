@@ -3,14 +3,16 @@ package dev.cameron2134.twitchapp;
 
 import com.mb3364.twitch.api.Twitch;
 import com.mb3364.twitch.api.auth.Scopes;
+import com.mb3364.twitch.api.handlers.ChannelResponseHandler;
 import com.mb3364.twitch.api.handlers.StreamsResponseHandler;
 import com.mb3364.twitch.api.handlers.TokenResponseHandler;
 import com.mb3364.twitch.api.handlers.UserFollowsResponseHandler;
+import com.mb3364.twitch.api.models.Channel;
 import com.mb3364.twitch.api.models.Stream;
 import com.mb3364.twitch.api.models.Token;
 import com.mb3364.twitch.api.models.UserFollow;
 import com.sun.jna.NativeLibrary;
-import dev.cameron2134.twitchapp.gui.GUI;
+import dev.cameron2134.twitchapp.gui.StreamUI;
 import dev.cameron2134.twitchapp.livestreamer.Livestream;
 import dev.cameron2134.twitchapp.livestreamer.LivestreamerSetup;
 import dev.cameron2134.twitchapp.utils.IO;
@@ -22,6 +24,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 
@@ -35,18 +41,18 @@ public class TwitchApp {
     private Twitch twitch;
     private AutoUpdater updater;
     
-    private String username;
+    private String username, status;
     
     private boolean requiresUpdates, dataReady;
     
-    private GUI gui;
+    private StreamUI gui;
     private LivestreamerSetup liveSetup;
     private Livestream stream;
     private VideoPlayer player;
     
     
     
-    public TwitchApp(GUI gui) {
+    public TwitchApp(StreamUI gui) {
         
         if (!new File("res").exists())
             new File("res").mkdir();
@@ -62,6 +68,8 @@ public class TwitchApp {
         this.player = new VideoPlayer(gui);
         
         this.username = "N/A";
+        this.status = "Generic Status";
+        
         this.gui = gui;
         this.requiresUpdates = dataReady = false;
 
@@ -91,7 +99,8 @@ public class TwitchApp {
             } 
             
             catch (URISyntaxException ex) {
-                System.err.println(ex.toString());
+                System.err.println(ex);
+                IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
             }
 
             String auth = twitch.auth().getAuthenticationUrl(twitch.getClientId(), callbackUri, Scopes.USER_READ, Scopes.CHANNEL_READ, Scopes.CHANNEL_STREAM);
@@ -102,7 +111,8 @@ public class TwitchApp {
             } 
             
             catch (URISyntaxException ex) {
-                System.err.println(ex.toString());
+                System.err.println(ex);
+                IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
             }
             
             try {
@@ -110,7 +120,8 @@ public class TwitchApp {
             } 
             
             catch (IOException ex) {
-                System.err.println(ex.toString());
+                System.err.println(ex);
+                IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
             }
 
 
@@ -247,13 +258,51 @@ public class TwitchApp {
         
         String[] temp = url.split("/");
         
+        
+        
         for (Stream stream : usersLive) {
             if (temp[3].equals(stream.getChannel().getName())) {
-                return stream.getChannel().getStatus();
+                this.status = stream.getChannel().getStatus();
+            }
+            
+            // The streamer isnt in the users follows, so obtain from twitch api
+            else if (stream.equals(usersLive.get(usersLive.size() - 1))) {
+                
+                // If the user is finding a stream that is not in their follows
+                twitch.channels().get(temp[3], new ChannelResponseHandler() {
+                    @Override
+                    public void onSuccess(Channel chnl) {
+                         status = chnl.getStatus();
+                    }
+
+                    @Override
+                    public void onFailure(int i, String string, String string1) {
+                        JOptionPane.showMessageDialog(null,
+                            "Streamer does not exist or is not currently streaming.",
+                            "Stream Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable thrwbl) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+
+                });
+                
             }
         }
         
-        return "";
+        try {
+            // Wait for api to retrieve data - bad way to do on event thread, will change later
+            Thread.sleep(1000);
+        } 
+        
+        catch (InterruptedException ex) {
+            Logger.getLogger(TwitchApp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return this.status;
     }
     
     

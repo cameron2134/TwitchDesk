@@ -11,9 +11,6 @@
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="menu_followsMouseClicked"/>
-          </Events>
         </Menu>
         <Menu class="javax.swing.JMenu" name="menu_chat">
           <Properties>
@@ -22,9 +19,6 @@
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="menu_chatMouseClicked"/>
-          </Events>
         </Menu>
         <Menu class="javax.swing.JMenu" name="menu_findStreamer">
           <Properties>
@@ -33,9 +27,6 @@
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="menu_findStreamerMouseClicked"/>
-          </Events>
         </Menu>
         <Menu class="javax.swing.JMenu" name="menu_About">
           <Properties>
@@ -44,9 +35,6 @@
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="menu_AboutMouseClicked"/>
-          </Events>
         </Menu>
       </SubComponents>
     </Menu>
@@ -240,9 +228,6 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Options"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_optionsActionPerformed"/>
-                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel1">
                   <Properties>
@@ -253,9 +238,6 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Manual Refresh"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_refreshActionPerformed"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>

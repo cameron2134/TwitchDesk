@@ -3,21 +3,22 @@ package dev.cameron2134.twitchapp.gui;
 
 import dev.cameron2134.twitchapp.livestreamer.LivestreamerSetup;
 import dev.cameron2134.twitchapp.utils.IO;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import javax.swing.ImageIcon;
 
 
-public class SetupGUI extends javax.swing.JFrame {
+public class SetupGUI extends GUI {
 
     private String name;
     private LivestreamerSetup setup;
-    private GUI gui;
+    private StreamUI gui;
     
     private final File options = new File("res/data/settings.cfg");
     
 
 
-    public SetupGUI(GUI gui, boolean pauseOnMin, boolean minToTray, boolean notificationsEnabled) {
+    public SetupGUI(StreamUI gui, boolean pauseOnMin, boolean minToTray, boolean notificationsEnabled) {
         feel();
         initComponents();
         
@@ -36,10 +37,46 @@ public class SetupGUI extends javax.swing.JFrame {
         check_notifications.setSelected(notificationsEnabled);
         
         
-        
+        createListeners();
     }
     
 
+    
+    
+    
+    @Override
+    public void createListeners() {
+        
+        btn_save.addActionListener((ActionEvent e) -> {
+            
+            setup.setArgs(TF_args.getText());
+            setup.setQuality(CB_quality.getSelectedItem().toString());
+            setup.setLivestreamerPath(TF_livestreamer.getText());
+
+            gui.setMinToTray(check_tray.isSelected());
+            gui.setPauseOnMin(check_pause.isSelected());
+            gui.notificationsEnabled(check_notifications.isSelected());
+
+            IO.write(new File("res/data/livestreamer.cfg"), "path=" + TF_livestreamer.getText(),  "args=" + TF_args.getText(), "quality=" + CB_quality.getSelectedItem().toString());
+            IO.write(options, "pause_on_min=" + check_pause.isSelected(), "min_to_tray=" + check_tray.isSelected(), "enable_notifications=" + check_notifications.isSelected());
+
+            gui.getApp().initStream(gui.getStreamerLink());
+
+            this.dispose();
+            
+        });
+        
+        
+        btn_finished.addActionListener((ActionEvent e) -> {
+
+            this.dispose();
+            
+        });
+        
+ 
+        
+    }
+    
     
 
 
@@ -74,8 +111,7 @@ public class SetupGUI extends javax.swing.JFrame {
 
         jPanel2 = new javax.swing.JPanel();
         lbl_name = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btn_finished = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -98,21 +134,8 @@ public class SetupGUI extends javax.swing.JFrame {
         setTitle("Settings");
         setResizable(false);
 
-        jButton2.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
-        jButton2.setText("Finished");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton3.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
-        jButton3.setText("Cancel");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
+        btn_finished.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
+        btn_finished.setText("Finished");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
@@ -133,11 +156,6 @@ public class SetupGUI extends javax.swing.JFrame {
 
         btn_save.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         btn_save.setText("Save");
-        btn_save.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_saveActionPerformed(evt);
-            }
-        });
 
         jLabel7.setFont(new java.awt.Font("Trebuchet MS", 1, 14)); // NOI18N
         jLabel7.setText("Stream");
@@ -245,9 +263,8 @@ public class SetupGUI extends javax.swing.JFrame {
                         .addComponent(lbl_name, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2)))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btn_finished)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -258,9 +275,7 @@ public class SetupGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_name, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton2))
+                .addComponent(btn_finished)
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
@@ -285,45 +300,17 @@ public class SetupGUI extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        
-        this.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void btn_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_saveActionPerformed
-        
-        setup.setArgs(TF_args.getText());
-        setup.setQuality(CB_quality.getSelectedItem().toString());
-        setup.setLivestreamerPath(TF_livestreamer.getText());
-        
-        gui.setMinToTray(check_tray.isSelected());
-        gui.setPauseOnMin(check_pause.isSelected());
-        gui.notificationsEnabled(check_notifications.isSelected());
-        
-        IO.write(new File("res/data/livestreamer.cfg"), "path=" + TF_livestreamer.getText(),  "args=" + TF_args.getText(), "quality=" + CB_quality.getSelectedItem().toString());
-        IO.write(options, "pause_on_min=" + check_pause.isSelected(), "min_to_tray=" + check_tray.isSelected(), "enable_notifications=" + check_notifications.isSelected());
-        
-        gui.getApp().initStream(gui.getStreamerLink());
-        
-        this.dispose();
-    }//GEN-LAST:event_btn_saveActionPerformed
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox CB_quality;
     private javax.swing.JTextField TF_args;
     private javax.swing.JTextField TF_livestreamer;
+    private javax.swing.JButton btn_finished;
     private javax.swing.JButton btn_save;
     private javax.swing.JCheckBox check_notifications;
     private javax.swing.JCheckBox check_pause;
     private javax.swing.JCheckBox check_tray;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
@@ -337,5 +324,7 @@ public class SetupGUI extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lbl_name;
     // End of variables declaration//GEN-END:variables
+
+    
 
 }

@@ -1,7 +1,7 @@
 
 package dev.cameron2134.twitchapp.video;
 
-import dev.cameron2134.twitchapp.gui.GUI;
+import dev.cameron2134.twitchapp.gui.StreamUI;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.SwingUtilities;
@@ -13,11 +13,11 @@ public class VideoPlayer {
     // Manages the VLCJ video player
     
     private EmbeddedMediaPlayerComponent player;
-    private GUI gui;
+    private StreamUI gui;
     
     
     
-    public VideoPlayer(GUI gui) {
+    public VideoPlayer(StreamUI gui) {
         
         player = new EmbeddedMediaPlayerComponent();
         this.gui = gui;

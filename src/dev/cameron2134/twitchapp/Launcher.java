@@ -1,7 +1,7 @@
 
 package dev.cameron2134.twitchapp;
 
-import dev.cameron2134.twitchapp.gui.GUI;
+import dev.cameron2134.twitchapp.gui.StreamUI;
 
 
 
@@ -11,7 +11,7 @@ public class Launcher {
     
     
     public static void main(String args[]) {        
-        new GUI().setVisible(true);
+        new StreamUI().setVisible(true);
     }
     
     
