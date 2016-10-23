@@ -295,7 +295,7 @@ public class TwitchApp {
         
         try {
             // Wait for api to retrieve data - bad way to do on event thread, will change later
-            Thread.sleep(500);
+            Thread.sleep(1000);
         } 
         
         catch (InterruptedException ex) {
