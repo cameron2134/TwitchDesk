@@ -13,6 +13,8 @@ There is very little to do to make TwitchDesk functional, simply extract the con
 
 If the application does not start, please delete the settings.cfg file in res/data.
 
+Since Livestreamer is unsupported, a recent Twitch API update means that each application needs to be authenticated. To ensure you can still use Livestreamer, navigate to %appdata%/livestreamer/livestreamerc, and add the following: 'twitch-oauth-token=XXXXXXXX' where XXX is your Twitch authentication token.
+
 
 ## Requirements
 In order to use TwitchDesk, you will need:
