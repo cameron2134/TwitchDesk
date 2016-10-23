@@ -6,6 +6,8 @@ import dev.cameron2134.twitchapp.utils.IO;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -35,27 +37,29 @@ public class Livestream implements Runnable {
     public void startStream() {
 
         ProcessBuilder builder;
-        
+        BufferedReader in = null;
         
         try {
             builder = new ProcessBuilder(streamCmd);
             process = builder.start();
 
+            in = new BufferedReader(new InputStreamReader(process.getInputStream()));
             
-            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            
             while (process.isAlive()) {
                 String output = in.readLine();
-
-                url = "";
                 
-                if (output.contains("127.0.0.1")) {
+                if (output != null && output.contains("127.0.0.1")) {
                     String[] h = output.split(" ");
                     url = h[2];
                     gui.displayVideo(url);
                     
+                    System.out.println(url);
+                    
+                    
                 }
+
                 
-                System.out.println(url);
             }
         } 
         
@@ -64,14 +68,15 @@ public class Livestream implements Runnable {
             IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
         }
         
-        catch (NullPointerException ex) {
-            System.err.println(ex);
-            IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
-
-            JOptionPane.showMessageDialog(null,
-                    "Streamer not found or not online",
-                    "Error starting stream",
-                    JOptionPane.ERROR_MESSAGE);
+        finally {
+            try {
+                in.close();
+            } 
+            
+            catch (IOException ex) {
+                System.err.println(ex);
+                IO.writeDebugLog(ExceptionUtils.getStackTrace(ex));
+            }
         }
         
     }

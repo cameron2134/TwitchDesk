@@ -38,7 +38,7 @@ public class AutoUpdater implements Runnable {
         
             while (!app.isDataReady()) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } 
                 
                 catch (InterruptedException ex) {

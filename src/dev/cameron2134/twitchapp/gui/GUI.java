@@ -44,11 +44,11 @@ import org.apache.commons.lang3.time.StopWatch;
 /**
  * 
  * @author cameron2134 https://github.com/cameron2134/TwitchDesk
- * @version alpha v0.4.3
+ * @version alpha v0.4.1
  */
 public class GUI extends javax.swing.JFrame {
 
-    private final String VERSION = "TwitchDesk Alpha v0.4.3";
+    private final String VERSION = "TwitchDesk Alpha v0.4.1";
     
     private TwitchApp app;
     private SetupGUI setupGUI;
@@ -336,7 +336,7 @@ public class GUI extends javax.swing.JFrame {
         streamerLink = url;
         app.initStream(streamerLink);
 
-        GUI.this.setTitle(VERSION + " - " + app.findStreamerStatus(url));
+        this.setTitle(VERSION + " - " + app.findStreamerStatus(url));
         
     }
     
@@ -367,7 +367,7 @@ public class GUI extends javax.swing.JFrame {
                         JOptionPane.INFORMATION_MESSAGE);
 
                 if (streamerUsername != null)
-                    initiateStream("http://twitch.tv/" + streamerUsername);
+                    initiateStream("http://twitch.tv/" + streamerUsername.toLowerCase());
 
             }
         });
