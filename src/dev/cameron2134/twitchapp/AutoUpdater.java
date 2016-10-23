@@ -3,8 +3,6 @@ package dev.cameron2134.twitchapp;
 
 import dev.cameron2134.twitchapp.gui.StreamUI;
 import dev.cameron2134.twitchapp.utils.IO;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 
