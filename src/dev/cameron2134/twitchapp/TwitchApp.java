@@ -12,7 +12,7 @@ import com.mb3364.twitch.api.models.Stream;
 import com.mb3364.twitch.api.models.Token;
 import com.mb3364.twitch.api.models.UserFollow;
 import com.sun.jna.NativeLibrary;
-import dev.cameron2134.twitchapp.gui.GUI;
+import dev.cameron2134.twitchapp.gui.StreamUI;
 import dev.cameron2134.twitchapp.livestreamer.Livestream;
 import dev.cameron2134.twitchapp.livestreamer.LivestreamerSetup;
 import dev.cameron2134.twitchapp.utils.IO;
@@ -45,14 +45,14 @@ public class TwitchApp {
     
     private boolean requiresUpdates, dataReady;
     
-    private GUI gui;
+    private StreamUI gui;
     private LivestreamerSetup liveSetup;
     private Livestream stream;
     private VideoPlayer player;
     
     
     
-    public TwitchApp(GUI gui) {
+    public TwitchApp(StreamUI gui) {
         
         if (!new File("res").exists())
             new File("res").mkdir();

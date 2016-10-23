@@ -1,7 +1,7 @@
 
 package dev.cameron2134.twitchapp.livestreamer;
 
-import dev.cameron2134.twitchapp.gui.GUI;
+import dev.cameron2134.twitchapp.gui.StreamUI;
 import dev.cameron2134.twitchapp.utils.IO;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,11 +20,11 @@ public class Livestream implements Runnable {
     private String[] streamCmd;
     private ProcessBuilder pb;
     private Process process;
-    private GUI gui;
+    private StreamUI gui;
     private String url;
     
     
-    public Livestream(GUI gui, String[] streamCmd) {
+    public Livestream(StreamUI gui, String[] streamCmd) {
         
         this.streamCmd = streamCmd;
         this.gui = gui;
