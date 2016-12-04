@@ -8,15 +8,16 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JComponent;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.SwingConstants;
-import javax.swing.plaf.basic.BasicMenuItemUI;
 import javax.swing.plaf.basic.BasicMenuUI;
 
 public class TwitchMenu extends BasicMenuUI implements MouseListener {
     
     private final Font f = new Font("Arial", Font.BOLD, 13);
+    
+    private final Color base = new Color(100, 65, 165, 255);
+    private final Color highlight = new Color(122, 101, 163, 255);
+    
     private boolean init;
     
     public TwitchMenu() {
@@ -34,7 +35,7 @@ public class TwitchMenu extends BasicMenuUI implements MouseListener {
         if (this.init) {
             c.addMouseListener(this);
 
-            c.setBackground(new Color(100, 65, 165, 255));
+            c.setBackground(base);
             this.init = false;
         }
     }
@@ -46,6 +47,10 @@ public class TwitchMenu extends BasicMenuUI implements MouseListener {
         g.setColor(Color.WHITE);
         int w2 = menuItem.getBounds().width / 2;
         textRect.translate(w2 - textRect.width / 2, 0);
+        
+        // Fixes highlighting issue when a menu item is selected
+        menuItem.setForeground(highlight);
+        
         super.paintText(g, menuItem, textRect, text);
     }
     
@@ -57,10 +62,10 @@ public class TwitchMenu extends BasicMenuUI implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-     
-        JComponent c = (JComponent) e.getComponent();
+    
+        JMenuItem c = (JMenuItem) e.getComponent();
 
-        c.setBackground(new Color(122, 101, 163, 255));
+        c.setBackground(highlight);
         c.repaint();
         
     }
@@ -68,18 +73,19 @@ public class TwitchMenu extends BasicMenuUI implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent e) {
        
-        JComponent c = (JComponent) e.getComponent();
+        JMenuItem c = (JMenuItem) e.getComponent();
 
-        c.setBackground(new Color(100, 65, 165, 255));
+
+        c.setBackground(base);
         c.repaint();
         
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        JComponent c = (JComponent) e.getComponent();
+        JMenuItem c = (JMenuItem) e.getComponent();
 
-        c.setBackground(new Color(122, 101, 163, 255));
+        c.setBackground(highlight);
         c.repaint();
         
         //item.setSelected(true);
@@ -87,9 +93,9 @@ public class TwitchMenu extends BasicMenuUI implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
-      JComponent c = (JComponent) e.getComponent();
+        JMenuItem c = (JMenuItem) e.getComponent();
 
-        c.setBackground(new Color(100, 65, 165, 255));
+        c.setBackground(base);
         c.repaint();
     }
     
