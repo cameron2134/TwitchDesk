@@ -7,9 +7,9 @@ import dev.cameron2134.twitchapp.TwitchApp;
 import dev.cameron2134.twitchapp.utils.IO;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
@@ -18,25 +18,27 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.plaf.ScrollPaneUI;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -75,6 +77,8 @@ public class StreamUI extends GUI {
 
     private List<Stream> previousOnlineFollows;
     
+    private URL backgroundURL;
+    
     
     public StreamUI() {
         
@@ -107,6 +111,8 @@ public class StreamUI extends GUI {
         if (minToTray)
             setUpTray();
         
+
+        
         applyCSS();
         
         app = new TwitchApp(this);
@@ -136,9 +142,21 @@ public class StreamUI extends GUI {
         videoPanel.setLayout(new BorderLayout());
         videoPanel.setMinimumSize(new Dimension(826, 4));
         videoPanel.setPreferredSize(new Dimension(826, 4));
+
+
+        btn_options.setUI(new TwitchButton());
+        btn_refresh.setUI(new TwitchButton());
         
         videoPanel.add(app.getVideoPlayer().getPlayerComponent(), BorderLayout.CENTER);
         
+        followPanel.setBackground(new Color(42, 35, 82, 255));
+        jPanel1.setBackground(new Color(42, 35, 82, 255));
+        jScrollPane1.getVerticalScrollBar().setUI(new TwitchScroll());
+        jMenuBar1.setUI(new TwitchMenuBar());
+        menu_follows.setUI(new TwitchMenu());
+        menu_chat.setUI(new TwitchMenu());
+        menu_findStreamer.setUI(new TwitchMenu());
+        menu_About.setUI(new TwitchMenu());
     }
     
 
@@ -227,7 +245,7 @@ public class StreamUI extends GUI {
         css.addRule("a {color: green; font-size: 14px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-weight: bold; text-decoration: none;}");
         css.addRule(".streamGame {font-size: 10px; font-style: italic; font-family: 'Trebuchet MS', Helvetica, sans-serif;}");
         css.addRule(".offline {color: red;}");
-        css.addRule("body {background-color:FFFDF0;}");
+        css.addRule("body {background-color:EBE0FF;}");
         css.addRule("h1 {font-size: 18px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-weight: bold;}");
         
         
@@ -603,12 +621,15 @@ public class StreamUI extends GUI {
         streamerPane.setText("");
         jScrollPane1.setViewportView(streamerPane);
 
+        volumeSlider.setForeground(new java.awt.Color(255, 255, 255));
         volumeSlider.setMajorTickSpacing(25);
         volumeSlider.setPaintLabels(true);
         volumeSlider.setPaintTicks(true);
 
         btn_options.setText("Options");
 
+        jLabel1.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Volume");
 
         btn_refresh.setText("Manual Refresh");
@@ -689,18 +710,22 @@ public class StreamUI extends GUI {
                 .addContainerGap())
         );
 
+        menu_follows.setForeground(new java.awt.Color(255, 255, 255));
         menu_follows.setText("Hide Side Panel");
         menu_follows.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jMenuBar1.add(menu_follows);
 
+        menu_chat.setForeground(new java.awt.Color(255, 255, 255));
         menu_chat.setText("Show Popout Chat");
         menu_chat.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jMenuBar1.add(menu_chat);
 
+        menu_findStreamer.setForeground(new java.awt.Color(255, 255, 255));
         menu_findStreamer.setText("Find Streamer");
         menu_findStreamer.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jMenuBar1.add(menu_findStreamer);
 
+        menu_About.setForeground(new java.awt.Color(255, 255, 255));
         menu_About.setText("About");
         menu_About.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jMenuBar1.add(menu_About);

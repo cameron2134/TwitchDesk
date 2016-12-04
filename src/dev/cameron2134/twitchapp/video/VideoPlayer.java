@@ -4,7 +4,6 @@ package dev.cameron2134.twitchapp.video;
 import dev.cameron2134.twitchapp.gui.StreamUI;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.SwingUtilities;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
 

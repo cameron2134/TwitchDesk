@@ -6,9 +6,6 @@ import dev.cameron2134.twitchapp.utils.IO;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 
