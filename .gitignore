@@ -5,6 +5,17 @@ ehthumbs.db
 # Folder config file
 Desktop.ini
 
+build/
+dist/
+nbproject/
+res/data/livestreamer.cfg
+res/data/log.txt
+res/data/token.cfg
+test/
+build.xml
+manifest.mf
+
+
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
