@@ -13,7 +13,7 @@ public class LivestreamerSetup {
     private String quality = "source";
     private String streamURL = "";
     
-    private File livestreamerConfig = new File("res/data/livestreamer.cfg");
+    private final File livestreamerConfig = new File("res/data/livestreamer.cfg");
     
     
     
@@ -45,6 +45,9 @@ public class LivestreamerSetup {
     // This should only run on first time setup, path should be stored in a config file for quick retrieval
     // Things like stream quality etc should also be stored in the config file
     
+    /**
+     * Attempt to find Livestreamer on the users system. If that fails, prompt user for manual input of location.
+     */
     private void findInstallation() {
         
  
@@ -69,7 +72,10 @@ public class LivestreamerSetup {
     }
     
     
-    
+    /**
+     * Builds the Livesreamer command required to launch a stream.
+     * @return The constructed command with arguments.
+     */
     public String[] createCmd() {    
         
         // Since theres two different setup objects, one in GUI one in setupgui, make sure the one in GUI is up to date if any settings are changes
