@@ -11,15 +11,13 @@ public class VideoPlayer {
 
     // Manages the VLCJ video player
     
-    private EmbeddedMediaPlayerComponent player;
-    private StreamUI gui;
+    private final EmbeddedMediaPlayerComponent player;
     
     
     
     public VideoPlayer(StreamUI gui) {
         
         player = new EmbeddedMediaPlayerComponent();
-        this.gui = gui;
     
         player.getMediaPlayer().setEnableKeyInputHandling(false);
         player.getMediaPlayer().setEnableMouseInputHandling(false);

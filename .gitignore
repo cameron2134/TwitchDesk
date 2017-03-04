@@ -9,6 +9,8 @@ build/
 dist/
 nbproject/
 res/data/livestreamer.cfg
+res/data/streamlink.cfg
+res/data/settings.cfg
 res/data/log.txt
 res/data/token.cfg
 test/

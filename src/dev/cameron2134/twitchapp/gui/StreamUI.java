@@ -52,32 +52,27 @@ import org.apache.commons.lang3.time.StopWatch;
 public class StreamUI extends GUI {
 
     private final String VERSION = "TwitchDesk Alpha v0.4.1";
+    private final TwitchApp app;
     
-    private TwitchApp app;
-    private SetupGUI setupGUI;
-    
-    private DecimalFormat df;
-    
-    private String url;
     private String streamerLink;
-    private String refreshTime;
-    
     private boolean refreshed, pauseOnMin, minToTray, showNotifications;
     
-    private StopWatch timer;
-
-
     private JSplitPane splitPane;
     
-    private PopupMenu popup;
     private TrayIcon trayIcon;
     
     private List<Stream> liveFollowList;
     private List<UserFollow> followList;
-
     private List<Stream> previousOnlineFollows;
     
-    private URL backgroundURL;
+    
+    
+    
+    public static void main(String args[]) {
+        new StreamUI().setVisible(true);
+    }
+    
+    
     
     
     public StreamUI() {
@@ -85,51 +80,52 @@ public class StreamUI extends GUI {
         feel();
         initComponents();
         
-        
-        ImageIcon frameIcon = new ImageIcon("res/img/twitch.png");
+        final ImageIcon frameIcon = new ImageIcon("res/img/twitch.png");
         this.setIconImage(frameIcon.getImage());
         
         
         if (new File("res/data/settings.cfg").exists() && !IO.isEmpty(new File("res/data/settings.cfg"))) {
             try {
-                String[] temp = IO.readMultiple(new File("res/data/settings.cfg"));
+                final String[] temp = IO.readMultiple(new File("res/data/settings.cfg"));
 
-                pauseOnMin = Boolean.parseBoolean(temp[0]);
-                minToTray = Boolean.parseBoolean(temp[1]);
-                showNotifications = Boolean.parseBoolean(temp[2]);
+                this.pauseOnMin = Boolean.parseBoolean(temp[0]);
+                this.minToTray = Boolean.parseBoolean(temp[1]);
+                this.showNotifications = Boolean.parseBoolean(temp[2]);
             }
             
             catch (ArrayIndexOutOfBoundsException ex) {
-                minToTray = pauseOnMin = showNotifications = false;
+                this.minToTray = this.pauseOnMin = this.showNotifications = false;
             }
         }
         
         else
-            minToTray = pauseOnMin = showNotifications = false;
+            this.minToTray = this.pauseOnMin = this.showNotifications = false;
         
         
-        if (minToTray)
+        if (this.minToTray)
             setUpTray();
         
-
-        
-        applyCSS();
-        
-        app = new TwitchApp(this);
-        
-        timer = new StopWatch();
-        df = new DecimalFormat("#,###");
-        
-        setupGUI = new SetupGUI(this, pauseOnMin, minToTray, showNotifications);
-        
-        refreshed = false;
+        this.app = new TwitchApp(this);
         
         this.setTitle(VERSION);
         
+        this.refreshed = false;
+
+        applyCSS();
         createListeners();
+        setUpInterface();
+    }
+    
+
+    
+    /**
+     * Sets up the StreamUI interface with custom look and feel, sets the size of components.
+     */
+    private void setUpInterface() {
         
         this.setMinimumSize(this.getPreferredSize());
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, videoPanel, followPanel);
+        
         // Video player gets priority over the extra space so the follow pane stays static
         splitPane.setResizeWeight(1);
         
@@ -157,88 +153,17 @@ public class StreamUI extends GUI {
         menu_chat.setUI(new TwitchMenu());
         menu_findStreamer.setUI(new TwitchMenu());
         menu_About.setUI(new TwitchMenu());
-    }
-    
-
-
-
-    
-    public void updateLiveFollowers() {
-        
-        String liveFollows = "";
-        String offlineFollows = "";
-        
-        // Compare the follows online in the last update to see if anyone new is online to notify the user about
-        previousOnlineFollows = liveFollowList;
-        
-        liveFollowList = app.getLiveFollowList();
-        followList = app.getFollowList();
-        
-
-        // Show live follows
-        if (!liveFollowList.isEmpty()) {
-            
-            String game;
-            
-            for (int i = 0; i < liveFollowList.size(); i++) {
-                
-                // If the person is live, don't show them in the offline list
-                for (int x = 0; x < followList.size(); x++) {
-                      
-                    if (followList.get(x).getChannel().getDisplayName().equals(liveFollowList.get(i).getChannel().getDisplayName())) {
-                        followList.remove(x);
-                        
-                    }
-
-                }
-                
-                if (liveFollowList.get(i).getChannel().getGame() == null)
-                    game = "N/A";
-                else
-                    game = liveFollowList.get(i).getChannel().getGame();
-                    
-                liveFollows += "<a href='http://twitch.tv/" + liveFollowList.get(i).getChannel().getName() + "'>" + liveFollowList.get(i).getChannel().getDisplayName() + "</a> <br> <div class='streamGame'> Playing " + game + ", " + df.format(liveFollowList.get(i).getViewers()) + " viewers </div> <br><br>";
-
-            }
-            
-            // If the app is in the system tray, throw a notification when a new streamer is online
-            if (StreamUI.this.getState() == StreamUI.ICONIFIED && showNotifications) {
-                
-                for (Stream stream : liveFollowList) {
-                    
-                    if (!previousOnlineFollows.contains(stream)) {
-                        displayBalloonMsg(stream.getChannel().getDisplayName() + " is now streaming.");
-                    }
-                }
-            }
-        }
-        
-        
-        
-        // Display offline follows
-        for (int i = 0; i < followList.size(); i++) {
-
-            offlineFollows += "<a class='offline' href='http://www.twitch.tv/" + followList.get(i).getChannel().getName() + "'>" + followList.get(i).getChannel().getDisplayName() + "</a> </div> <br> Offline <br><br>";
-        }
-        
-        
-        String html = "<html> <body> <h1> You Follow </h1> <h2> Live: </h2>" + liveFollows + " <hr> <h2> Offline: </h2>" + offlineFollows + "</body> </html>";
-        streamerPane.setText(html);
-        
         
     }
-    
-
-   
 
     
-    
-    
+    /**
+     * Apply CSS styling to the follower editor pane.
+     */
     private void applyCSS() {      
         
         HTMLEditorKit kit = new HTMLEditorKit();
         streamerPane.setEditorKit(kit);
-        //mainPane.setEditorKit(kit);
         
         StyleSheet css = kit.getStyleSheet();
         
@@ -250,39 +175,13 @@ public class StreamUI extends GUI {
         
         
         streamerPane.setDocument(kit.createDefaultDocument());
-        //mainPane.setDocument(kit.createDefaultDocument());
-        
-    }
-    
-    
-    
-    public void displayVideo(String url) {
-        this.url = url;
-        
-        app.getVideoPlayer().startPlayer(url);
-        
-        // Initialise at volume 50
-        app.getVideoPlayer().playerVolume(volumeSlider.getValue());
-        
-        
-    }
-    
-    
-    public void stopVideo() {
-        app.getVideoPlayer().stopPlayer();
-    }
-    
 
-
-    
-    public void displayBalloonMsg(String msg) {
-        trayIcon.displayMessage("TwitchDesk", msg, TrayIcon.MessageType.INFO);
     }
     
     
-    
-    
-
+    /**
+     * Set up the application task tray for when the application is minimized.
+     */
     private void setUpTray() {
 
         //Check the SystemTray is supported
@@ -291,19 +190,19 @@ public class StreamUI extends GUI {
             return;
         }
 
-        popup = new PopupMenu();
-        trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage("res/img/twitch.png"), "TwitchDesk", popup);
-        trayIcon.setImageAutoSize(true);
-
-        SystemTray tray = SystemTray.getSystemTray();
+        final PopupMenu popup = new PopupMenu();
         
+        this.trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage("res/img/twitch.png"), "TwitchDesk", popup);
+        this.trayIcon.setImageAutoSize(true);
 
-        MenuItem aboutItem = new MenuItem("Show");
+
+        final MenuItem aboutItem = new MenuItem("Show");
         popup.add(aboutItem);
 
 
-
         // When the application is minimized, hide it in the tray.
+        final SystemTray tray = SystemTray.getSystemTray();
+        
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowIconified(WindowEvent e) {
@@ -347,22 +246,121 @@ public class StreamUI extends GUI {
     }
     
     
-    
-    
+    /**
+     * Start a stream with the supplied streamer URL and set the stream status.
+     * @param url The streamers URL to obtain the stream from.
+     */
     private void initiateStream(String url) {
         
         System.out.println(url);
-        streamerLink = url;
-        app.initStream(streamerLink);
+        this.streamerLink = url;
+        this.app.initStream(this.streamerLink);
 
-        this.setTitle(VERSION + " - " + app.findStreamerStatus(url));
+        this.setTitle(VERSION + " - " + this.app.findStreamerStatus(url));
         
     }
     
     
+    /**
+     * Get the latest follow lists from TwitchApp and update the editor pane.
+     */
+    public void updateLiveFollowers() {
+        
+        String liveFollows = "";
+        String offlineFollows = "";
+        
+        final DecimalFormat df = new DecimalFormat("#,###");
+        
+        // Compare the follows online in the last update to see if anyone new is online to notify the user about
+        previousOnlineFollows = liveFollowList;
+        
+        liveFollowList = app.getLiveFollowList();
+        followList = app.getFollowList();
+        
+
+        // Show live follows
+        if (!liveFollowList.isEmpty()) {
+            String game;
+            
+            for (int i = 0; i < liveFollowList.size(); i++) {
+                
+                // If the person is live, don't show them in the offline list
+                for (int x = 0; x < followList.size(); x++) {
+                    if (followList.get(x).getChannel().getDisplayName().equals(liveFollowList.get(i).getChannel().getDisplayName())) 
+                        followList.remove(x); 
+                }
+                
+                if (liveFollowList.get(i).getChannel().getGame() == null)
+                    game = "N/A";
+                else
+                    game = liveFollowList.get(i).getChannel().getGame();
+                    
+                liveFollows += "<a href='http://twitch.tv/" + liveFollowList.get(i).getChannel().getName() + "'>" + liveFollowList.get(i).getChannel().getDisplayName() + "</a> <br> <div class='streamGame'> Playing " + game + ", " + df.format(liveFollowList.get(i).getViewers()) + " viewers </div> <br><br>";
+
+            }
+            
+            // If the app is in the system tray, throw a notification when a new streamer is online
+            if (StreamUI.this.getState() == StreamUI.ICONIFIED && showNotifications) {
+                
+                for (Stream stream : liveFollowList) {
+                    
+                    if (!previousOnlineFollows.contains(stream)) {
+                        displayBalloonMsg(stream.getChannel().getDisplayName() + " is now streaming.");
+                    }
+                }
+            }
+        }
+        
+        
+        
+        // Display offline follows
+        for (int i = 0; i < followList.size(); i++) 
+            offlineFollows += "<a class='offline' href='http://www.twitch.tv/" + followList.get(i).getChannel().getName() + "'>" + followList.get(i).getChannel().getDisplayName() + "</a> </div> <br> Offline <br><br>";
+        
+        
+        
+        String html = "<html> <body> <h1> You Follow </h1> <h2> Live: </h2>" + liveFollows + " <hr> <h2> Offline: </h2>" + offlineFollows + "</body> </html>";
+        streamerPane.setText(html);
+        
+        
+    }
     
+
+    /**
+     * Start the video player with the supplied URL and set the default volume level.
+     * @param url The URL to play in the video player.
+     */
+    public void displayVideo(String url) {
+        this.app.getVideoPlayer().startPlayer(url);
+        
+        // Initialise at volume 50
+        this.app.getVideoPlayer().playerVolume(volumeSlider.getValue());
+        
+        
+    }
+    
+    
+    /**
+     * Stops the video player.
+     */
+    public void stopVideo() {
+        this.app.getVideoPlayer().stopPlayer();
+    }
+    
+
+    public void displayBalloonMsg(String msg) {
+        this.trayIcon.displayMessage("TwitchDesk", msg, TrayIcon.MessageType.INFO);
+    }
+    
+
+    /**
+     * Creates the listeners for all of the UI elements.
+     */
     @Override
     public void createListeners() {
+        
+        final StopWatch timer = new StopWatch();
+        final SetupGUI setupGUI = new SetupGUI(this, this.pauseOnMin, this.minToTray, this.showNotifications);
         
         btn_options.addActionListener((ActionEvent e) -> {
             
@@ -375,22 +373,22 @@ public class StreamUI extends GUI {
             
         });
         
-        
+
         btn_refresh.addActionListener((ActionEvent e) -> {
             
             // Restrict manual refresh to every 5 seconds to prevent API spam
             if (timer.getTime() > 5000) {
-                refreshed = false;
+                this.refreshed = false;
                 timer.stop();
                 timer.reset();
             }
 
-            if (!refreshed) {
+            if (!this.refreshed) {
                 timer.start();
-                refreshed = true;
+                this.refreshed = true;
 
-                app.loadData();
-                app.updateGUI();
+                this.app.loadData();
+                this.app.updateGUI();
 
             }
 
@@ -529,9 +527,6 @@ public class StreamUI extends GUI {
         }
 
     }
-    
-    
-    
     
     public void setMinToTray(boolean value) {
         this.minToTray = value;

@@ -14,7 +14,7 @@ import com.mb3364.twitch.api.models.UserFollow;
 import com.sun.jna.NativeLibrary;
 import dev.cameron2134.twitchapp.gui.StreamUI;
 import dev.cameron2134.twitchapp.livestreamer.Livestream;
-import dev.cameron2134.twitchapp.livestreamer.LivestreamerSetup;
+import dev.cameron2134.twitchapp.livestreamer.StreamlinkSetup;
 import dev.cameron2134.twitchapp.utils.IO;
 import dev.cameron2134.twitchapp.video.VideoPlayer;
 import java.awt.Desktop;
@@ -46,12 +46,16 @@ public class TwitchApp {
     private boolean requiresUpdates, dataReady;
     
     private StreamUI gui;
-    private LivestreamerSetup liveSetup;
+    private StreamlinkSetup liveSetup;
     private Livestream stream;
     private VideoPlayer player;
     
     
     
+    /**
+     * Creates a new TwitchApp object and initialises the API.
+     * @param gui The StreamUI object to update.
+     */
     public TwitchApp(StreamUI gui) {
         
         if (!new File("res").exists())
@@ -64,7 +68,7 @@ public class TwitchApp {
         
         this.twitch = new Twitch();
         this.updater = new AutoUpdater(this, gui);
-        this.liveSetup = new LivestreamerSetup();
+        this.liveSetup = new StreamlinkSetup();
         this.player = new VideoPlayer(gui);
         
         this.username = "N/A";
@@ -75,9 +79,6 @@ public class TwitchApp {
 
         authenticateUser();
         
-        
-        
-        
         new Thread(this.updater).start();
 
     }
@@ -85,9 +86,12 @@ public class TwitchApp {
     
     
     
+    /**
+     * Authenticates the user with the Twitch API using the application's client ID and the users authentication token.
+     */
     private void authenticateUser() {
-        
-        twitch.setClientId("a9xodw766xrik26uhddfmtmq7slsgbk");
+        final String clientID = "a9xodw766xrik26uhddfmtmq7slsgbk";
+        twitch.setClientId(clientID);
         
         // User has not authenticated/ran the application yet
         if (!tokenFile.exists()|| IO.isEmpty(tokenFile)) {
@@ -155,6 +159,9 @@ public class TwitchApp {
     
     // Load all the data from the API first, as this takes time and runs separately
     // Will prevent the app from doing anything until this data is loaded
+    /**
+     * Loads the users username, follows and live follows from the Twitch API.
+     */
     public void loadData() {
                 
         // Using the root of the API to obtain the username
@@ -241,6 +248,10 @@ public class TwitchApp {
     
     
     
+    /**
+     * Initialises a new live stream on a separate thread.
+     * @param url The URL of the streamer to start watching.
+     */
     public void initStream(String url) {
         
         if (this.stream != null && stream.isActive())
@@ -253,7 +264,12 @@ public class TwitchApp {
     }
     
     
-    // Find the status of the current stream to display in the title bar
+
+    /**
+     * Obtains the status of the current stream to display in the title bar.
+     * @param url The URL of the streamer.
+     * @return The streamers status.
+     */
     public String findStreamerStatus(String url) {
         
         String[] temp = url.split("/");

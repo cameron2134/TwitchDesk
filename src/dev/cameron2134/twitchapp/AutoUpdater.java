@@ -9,20 +9,13 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 public class AutoUpdater implements Runnable {
 
     // Auto refreshes API data every x minutes/seconds that the user specifies
-    
-    private TwitchApp app;
-    private StreamUI gui;
-    
-    private boolean update;
     private final int UPDATE_TIME = 60000;
+    
+    private final TwitchApp app;  
     
     
     public AutoUpdater(TwitchApp app, StreamUI gui) {
-        
         this.app = app;
-        this.gui = gui;
-        
-        this.update = true;
     }
     
     
@@ -31,7 +24,8 @@ public class AutoUpdater implements Runnable {
     @Override
     public void run() {
 
-        while (update) {
+        // No need for the auto updater to stop running
+        while (true) {
             app.loadData();
         
             while (!app.isDataReady()) {
@@ -59,12 +53,5 @@ public class AutoUpdater implements Runnable {
         }
     }
     
-    
-    
-    public synchronized void stop() {
-        
-        update = false;
-        
-    }
 
 }

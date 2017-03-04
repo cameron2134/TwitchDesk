@@ -9,7 +9,7 @@ TwitchDesk is a Java application designed to allow users to view twitch.tv strea
 
 
 ## Installation
-There is very little to do to make TwitchDesk functional, simply extract the contents of the .zip into a folder, ensure the supplied .exe (or .jar, depending on which version you downloaded) is in the same folder as the 'res' and 'data' folders, then run the .exe or .jar. If the application cannot automatically determine your Livestreamer install directory, you will be prompted for manual entry. Once Livestreamer has been found, you will be asked to authorize the application, then you're good to go!
+There is very little to do to make TwitchDesk functional, simply extract the contents of the .zip into a folder, ensure the supplied .exe (or .jar, depending on which version you downloaded) is in the same folder as the 'res' and 'data' folders, then run the .exe or .jar. If the application cannot automatically determine your Streamlink install directory, you will be asked to select your Streamlink installation folder. Once Streamlink has been found, you will be asked to authorize the application, then you're good to go!
 
 If the application does not start, please delete the settings.cfg file in res/data.
 
@@ -20,7 +20,7 @@ Since Livestreamer is unsupported, a recent Twitch API update means that each ap
 In order to use TwitchDesk, you will need:
 
 * <a href="http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html">Java Runtime Environment 8</a> (x64 only, does not work with x86 yet)
-* Have <a href="https://github.com/chrippa/livestreamer/releases">Livestreamer</a> installed on your system
+* Have <a href="https://github.com/streamlink/streamlink/releases">Streamlink</a> installed on your system
 
 
 
