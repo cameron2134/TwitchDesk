@@ -3,25 +3,26 @@ package dev.cameron2134.twitchapp.livestreamer;
 
 import dev.cameron2134.twitchapp.utils.IO;
 import java.io.File;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 
-public class LivestreamerSetup {
+public class StreamlinkSetup {
 
     private String installationPath = "";
     private String args = "--player-external-http";
     private String quality = "source";
     private String streamURL = "";
     
-    private final File livestreamerConfig = new File("res/data/livestreamer.cfg");
+    private final File streamlinkConfig = new File("res/data/streamlink.cfg");
     
     
     
     
-    public LivestreamerSetup() {
+    public StreamlinkSetup() {
         // Load settings here or create them
-        if (livestreamerConfig.exists() && !IO.isEmpty(livestreamerConfig)) {
-            String[] temp = IO.readMultiple(livestreamerConfig);
+        if (streamlinkConfig.exists() && !IO.isEmpty(streamlinkConfig)) {
+            String[] temp = IO.readMultiple(streamlinkConfig);
             installationPath = temp[0];
             
             args = temp[1];
@@ -42,30 +43,37 @@ public class LivestreamerSetup {
     
     
     
-    // This should only run on first time setup, path should be stored in a config file for quick retrieval
-    // Things like stream quality etc should also be stored in the config file
     
     /**
-     * Attempt to find Livestreamer on the users system. If that fails, prompt user for manual input of location.
+     * Attempt to find Streamlink on the users system. If that fails, prompt user for manual input of location.
      */
     private void findInstallation() {
         
- 
         // Attempt to automatically detect installation first
-
-        if (new File("C:/Program Files (x86)/Livestreamer/livestreamer.exe").exists()) 
-            installationPath = "C:/Program Files (x86)/livestreamer/livestreamer.exe";
-
+        if (new File("C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe").exists()) 
+            installationPath = "C:\\Program Files (x86)\\Streamlink\\bin\\streamlink.exe";
 
         else {
-            installationPath = JOptionPane.showInputDialog(null, "Failed to auto detect path. Please specify your Livestreamer installation path:","Setup", JOptionPane.INFORMATION_MESSAGE);
-
-            if (!installationPath.contains("livestreamer.exe")) {
-                installationPath += "/livestreamer.exe";
+            JOptionPane.showMessageDialog(null, "Streamlink could not be detected. Please select your installation directory.", "Streamlink Error", JOptionPane.ERROR_MESSAGE);
+            
+            final JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setApproveButtonToolTipText("Select your Streamlink folder");
+            
+            final int result = chooser.showDialog(chooser, "Select");
+            
+            if (result == JFileChooser.APPROVE_OPTION) 
+                installationPath = chooser.getSelectedFile().toString();
+            
+            if (!installationPath.contains("bin")) {
+                installationPath += "\\bin\\streamlink.exe";
             }
+            
+            else
+                installationPath += "\\streamlink.exe";
         }          
 
-        IO.write(livestreamerConfig, "path=" + installationPath, "args=" + args, "quality=" + quality);
+        IO.write(streamlinkConfig, "path=" + installationPath, "args=" + args, "quality=" + quality);
         
        
                 
@@ -73,13 +81,13 @@ public class LivestreamerSetup {
     
     
     /**
-     * Builds the Livesreamer command required to launch a stream.
+     * Builds the Streamlink command required to launch a stream.
      * @return The constructed command with arguments.
      */
     public String[] createCmd() {    
         
         // Since theres two different setup objects, one in GUI one in setupgui, make sure the one in GUI is up to date if any settings are changes
-        String[] temp = IO.readMultiple(livestreamerConfig);
+        String[] temp = IO.readMultiple(streamlinkConfig);
         installationPath = temp[0];
 
         args = temp[1];

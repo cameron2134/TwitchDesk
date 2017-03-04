@@ -1,7 +1,7 @@
 
 package dev.cameron2134.twitchapp.gui;
 
-import dev.cameron2134.twitchapp.livestreamer.LivestreamerSetup;
+import dev.cameron2134.twitchapp.livestreamer.StreamlinkSetup;
 import dev.cameron2134.twitchapp.utils.IO;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 public class SetupGUI extends GUI {
 
     private String name;
-    private LivestreamerSetup setup;
+    private StreamlinkSetup setup;
     private StreamUI gui;
     
     private final File options = new File("res/data/settings.cfg");
@@ -25,7 +25,7 @@ public class SetupGUI extends GUI {
         ImageIcon frameIcon = new ImageIcon("res/img/twitch.png");
         this.setIconImage(frameIcon.getImage());
 
-        this.setup = new LivestreamerSetup();
+        this.setup = new StreamlinkSetup();
         this.gui = gui;
         
         TF_livestreamer.setText(setup.getVLCPath());
@@ -140,10 +140,10 @@ public class SetupGUI extends GUI {
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
         jLabel6.setFont(new java.awt.Font("Trebuchet MS", 1, 14)); // NOI18N
-        jLabel6.setText("Livestreamer");
+        jLabel6.setText("Streamlink");
 
         jLabel20.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
-        jLabel20.setText("Livestreamer Path");
+        jLabel20.setText("Streamlink Path");
 
         TF_livestreamer.setFont(new java.awt.Font("Trebuchet MS", 0, 11)); // NOI18N
         TF_livestreamer.setText("jTextField2");

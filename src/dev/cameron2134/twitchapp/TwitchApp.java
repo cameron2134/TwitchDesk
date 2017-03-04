@@ -14,7 +14,7 @@ import com.mb3364.twitch.api.models.UserFollow;
 import com.sun.jna.NativeLibrary;
 import dev.cameron2134.twitchapp.gui.StreamUI;
 import dev.cameron2134.twitchapp.livestreamer.Livestream;
-import dev.cameron2134.twitchapp.livestreamer.LivestreamerSetup;
+import dev.cameron2134.twitchapp.livestreamer.StreamlinkSetup;
 import dev.cameron2134.twitchapp.utils.IO;
 import dev.cameron2134.twitchapp.video.VideoPlayer;
 import java.awt.Desktop;
@@ -46,7 +46,7 @@ public class TwitchApp {
     private boolean requiresUpdates, dataReady;
     
     private StreamUI gui;
-    private LivestreamerSetup liveSetup;
+    private StreamlinkSetup liveSetup;
     private Livestream stream;
     private VideoPlayer player;
     
@@ -68,7 +68,7 @@ public class TwitchApp {
         
         this.twitch = new Twitch();
         this.updater = new AutoUpdater(this, gui);
-        this.liveSetup = new LivestreamerSetup();
+        this.liveSetup = new StreamlinkSetup();
         this.player = new VideoPlayer(gui);
         
         this.username = "N/A";
